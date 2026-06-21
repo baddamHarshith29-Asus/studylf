@@ -755,6 +755,189 @@ app.post('/api/activity', (req, res) => {
 });
 
 
+// 14. Unique Feature: AI Pitch Practice Room Questions
+const stageQuestions = {
+  'Idea': [
+    { id: 'q-1', text: "What is the specific pain point that you have personally witnessed?", tips: "Discuss a concrete scenario or a friction point you have experienced or watched other people struggle with." },
+    { id: 'q-2', text: "Who is the customer that needs this product the most, and how do you know?", tips: "Narrow your persona. Don't say 'everyone'. Identify the precise title, role, or user type who is actively seeking a solution." },
+    { id: 'q-3', text: "What are the manual alternatives or workarounds customers use today?", tips: "Acknowledge Excel sheets, emails, or slow manual tasks. Explain why these workarounds are failing or are too expensive." },
+    { id: 'q-4', text: "Why will this customer pay for your solution rather than standard tools?", tips: "Focus on workflow integration, speed, or specialized accuracy. Be direct about the return on investment (ROI) for them." },
+    { id: 'q-5', text: "How do you plan to acquire your first 5 customers without spending money?", tips: "Suggest cold emails, direct networking, or community postings. VCs love to see scrappy founders who can hustle." }
+  ],
+  'Validation': [
+    { id: 'q-1', text: "What is your landing page or waitlist conversion rate so far?", tips: "Share specific conversion rates (e.g., 15% click-to-signup). Explain what channels drove this traffic." },
+    { id: 'q-2', text: "What feedback from your customer discovery interviews surprised you the most?", tips: "Shows that you are listening. Discuss how a user pivot or a feature request changed your original assumptions." },
+    { id: 'q-3', text: "What is the biggest risk that could kill this startup in the next 3 months?", tips: "Acknowledge developer issues, regulatory hurdles, or customer resistance honestly, and show how you plan to mitigate it." },
+    { id: 'q-4', text: "How will you build a lean prototype (MVP) within 4 weeks?", tips: "Discuss your plan to use Bubble, Webflow, or a simplified React code framework. Keep the scope strictly focused." },
+    { id: 'q-5', text: "What trigger event will make a customer start looking for your solution?", tips: "Explain the moment of friction that forces them to act (e.g., 'when their server crashes' or 'when their tax deadline is 3 days away')." }
+  ],
+  'MVP': [
+    { id: 'q-1', text: "Why are your early users using your product, and what are they complaining about?", tips: "Honest customer feedback is gold. Focus on the core value they like and the UI complaints they have." },
+    { id: 'q-2', text: "What feature in your MVP is the most used, and why?", tips: "Focus on the data. Mention user logs or clicks that verify which module solved the pain best." },
+    { id: 'q-3', text: "How did you find your active beta testers?", tips: "Share your distribution channels (Slack groups, Reddit, LinkedIn DMs, or warm founder intros)." },
+    { id: 'q-4', text: "What is your main metric of user engagement (daily active users, weekly sessions, etc.)?", tips: "Explain what metric proves your product is sticky. Highlight how often a user returns to solve their problem." },
+    { id: 'q-5', text: "What are you doing manually behind the scenes that looks like AI or automation?", tips: "Wizard-of-Oz setups are normal. Explain how you manually check outputs to assure quality before writing code." }
+  ],
+  'Revenue': [
+    { id: 'q-1', text: "What is your current monthly recurring revenue (MRR) or user growth rate?", tips: "State your metrics clearly. Show month-over-month growth trends, even if early (e.g., '$1k MRR growing 20% MoM')." },
+    { id: 'q-2', text: "What is your customer acquisition cost (CAC) and how do you intend to lower it?", tips: "Outline paid ads, organic content, or referral loops. Show that you understand the unit economics." },
+    { id: 'q-3', text: "What is your monthly churn rate and what are the main reasons users leave?", tips: "Define your retention. If churn is high, identify the feature gap or onboarding friction causing it." },
+    { id: 'q-4', text: "How do you price your product, and how did you test pricing tiers?", tips: "Explain your value metric (per seat, per run, or package tiers). Discuss if users complained about price or paid instantly." },
+    { id: 'q-5', text: "What is your repeatable marketing or sales loop?", tips: "Focus on a growth engine. Is it SEO, cold outbound email, programmatic integrations, or partnership channels?" }
+  ],
+  'Fundraising': [
+    { id: 'q-1', text: "How much are you raising and what is the exact runway it provides?", tips: "Be precise (e.g., 'Raising $500k for 18 months of runway'). Outline hiring, product, and marketing spend allocations." },
+    { id: 'q-2', text: "What is your valuation justification based on market metrics?", tips: "Reference comparable early stage deals or multiple metrics. Keep it grounded in market averages for your sector." },
+    { id: 'q-3', text: "What is your unfair advantage that prevents a competitor with more funding from copying you?", tips: "Focus on proprietary integrations, data loops, network effects, or your speed of execution." },
+    { id: 'q-4', text: "What is the long term vision for this company in 5 years (market size, ARR)?", tips: "Show massive ambition. Explain how you expand from a single product to a platform dominating the industry." },
+    { id: 'q-5', text: "Who is the key hire you will make with this new funding round?", tips: "Identify your team gaps (e.g., Head of Engineering, GTM Growth Lead) and why this hire accelerates your milestones." }
+  ]
+};
+
+app.post('/api/copilot/pitch-simulator/questions', (req, res) => {
+  const stage = userProfile.stage || 'Idea';
+  const questions = stageQuestions[stage] || stageQuestions['Idea'];
+  res.json({ success: true, stage, questions });
+});
+
+app.post('/api/copilot/pitch-simulator/evaluate', (req, res) => {
+  const { question, answer } = req.body;
+  if (!answer || answer.trim().length < 15) {
+    return res.json({
+      success: true,
+      score: 2,
+      critique: "Your response is too brief. Venture Capitalists (VCs) expect structured, detailed explanations that show deep domain understanding, customer insights, and metrics. Avoid one-sentence answers.",
+      tips: "Use the STAR method: explain the Situation, Task, Action, and the measurable Result. Aim for at least 3-4 descriptive sentences."
+    });
+  }
+
+  const lowerAns = answer.toLowerCase();
+  let score = 5;
+  let critiqueParts = [];
+  
+  // Keyword scoring checks
+  const keywords = [
+    { word: 'customer', pts: 1, comment: "Good focus on customer-centricity." },
+    { word: 'data', pts: 1, comment: "Excellent use of quantitative tracking." },
+    { word: 'metrics', pts: 1, comment: "Mentions business tracking metrics." },
+    { word: 'validate', pts: 1, comment: "Mentions concept validation loops." },
+    { word: 'pain', pts: 1, comment: "Addresses the core user friction point." },
+    { word: 'growth', pts: 1, comment: "Reflects growth-oriented thinking." },
+    { word: 'scale', pts: 1, comment: "Mentions scalability goals." },
+    { word: 'competitor', pts: 1, comment: "Acknowledges market alternatives." },
+    { word: 'roi', pts: 1, comment: "Addresses commercial return value." },
+    { word: 'conversion', pts: 1, comment: "Reflects conversion funnel metrics." }
+  ];
+
+  keywords.forEach(kw => {
+    if (lowerAns.includes(kw.word)) {
+      score += kw.pts;
+      critiqueParts.push(kw.comment);
+    }
+  });
+
+  // Cap score at 10
+  score = Math.min(10, score);
+  if (answer.length > 250) score = Math.min(10, score + 1);
+
+  let critiqueText = "";
+  if (score >= 8) {
+    critiqueText = "Excellent pitch response! " + critiqueParts.join(" ") + " You demonstrate a strong grasp of startup economics, specific metrics, and tactical strategy. A VC would find this answer credible.";
+  } else if (score >= 6) {
+    critiqueText = "Solid answer. " + critiqueParts.join(" ") + " However, you could make it stronger by adding more specific metrics (conversion rates, CAC, exact numbers) and a clear, repeatable distribution loop. Make sure your unique differentiator stands out.";
+  } else {
+    critiqueText = "This response is a bit generic. You need to focus more on unique customer insights, raw data, or direct validation metrics. Avoid empty buzzwords like 'synergy' or 'disruption' and focus on how you solve the pain point.";
+  }
+
+  res.json({
+    success: true,
+    score,
+    critique: critiqueText,
+    tips: "Tip: Next time, try to insert a specific metric or number (e.g., '15% waitlist signup rate' or '₹4500 CAC') to ground your answer in absolute reality. VCs love quantitative proof."
+  });
+});
+
+// 15. Unique Feature: Sequoia Pitch Storyboard Slides
+let savedStoryboards = {};
+
+app.get('/api/roadmap/storyboard', (req, res) => {
+  const startupName = userProfile.startupName || "My Startup";
+  const industry = userProfile.industry || "AI & SaaS";
+  
+  const defaultSlides = [
+    { 
+      id: 1, 
+      title: "1. Company Purpose", 
+      guidance: `Define ${startupName} in a single, clear declarative sentence. Avoid technical jargon or marketing hype (e.g., 'An AI assistant that summarizes vendor contracts for SMEs in 30 seconds').`,
+      placeholder: "Draft your company one-liner purpose here..."
+    },
+    { 
+      id: 2, 
+      title: "2. Problem", 
+      guidance: `Describe the specific pain point your customers face today. How are they solving it now? Why is the current workaround (like Excel or manual labor) expensive or painful?`,
+      placeholder: "Describe the core customer pain point..."
+    },
+    { 
+      id: 3, 
+      title: "3. Solution", 
+      guidance: `How does ${startupName} solve this? Show the 'aha!' moment. Detail how your software makes their life 10x easier, faster, or cheaper.`,
+      placeholder: "Draft your unique solution value proposition..."
+    },
+    { 
+      id: 4, 
+      title: "4. Why Now?", 
+      guidance: `Why hasn't this been built before? What recent technological shift (like large language models), market shift, or regulatory change makes today the perfect window?`,
+      placeholder: "Explain why this is the perfect time to build..."
+    },
+    { 
+      id: 5, 
+      title: "5. Market Size", 
+      guidance: `Provide realistic estimations for TAM (Total Addressable Market), SAM (Serviceable Addressable Market), and SOM (Serviceable Obtainable Market) within the ${industry} sector.`,
+      placeholder: "e.g., TAM: $5.2B. SAM: $1.2B. SOM: $40M."
+    },
+    { 
+      id: 6, 
+      title: "6. Competition", 
+      guidance: "List your direct and indirect competitors. What is your unique unfair advantage? Why is your product sticky enough to prevent churn?",
+      placeholder: "Detail your competitors and your competitive moat..."
+    },
+    { 
+      id: 7, 
+      title: "7. Product", 
+      guidance: "Describe your MVP or core features. What is the key customer workflow? Keep it simple, visual, and focused on usability.",
+      placeholder: "List your product features and user workflows..."
+    },
+    { 
+      id: 8, 
+      title: "8. Business Model", 
+      guidance: `How will ${startupName} make money? Detail your pricing strategy (e.g. B2B SaaS subscription tiers, transaction fees, usage metrics).`,
+      placeholder: "Draft your monetization and pricing models..."
+    },
+    { 
+      id: 9, 
+      title: "9. Team", 
+      guidance: "Who is building this? Explain why your team has the technical or sector expertise to win this market.",
+      placeholder: "Briefly list team members and domain credentials..."
+    },
+    { 
+      id: 10, 
+      title: "10. The Ask", 
+      guidance: "How much funding are you raising? How long does it extend your runway (e.g., 18 months), and what milestones will you achieve?",
+      placeholder: "State your funding ask and runway milestones..."
+    }
+  ];
+
+  const storyboard = savedStoryboards[userProfile.startupName] || defaultSlides;
+  res.json({ success: true, storyboard });
+});
+
+app.post('/api/roadmap/storyboard/save', (req, res) => {
+  const { storyboard } = req.body;
+  savedStoryboards[userProfile.startupName] = storyboard;
+  res.json({ success: true, message: 'Storyboard progression saved successfully.' });
+});
+
+
 // Start Server locally if not running on Vercel
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {

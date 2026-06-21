@@ -25,6 +25,11 @@ export default function Dashboard({ profile, setProfile, validationReports, setV
   const [showValModal, setShowValModal] = useState(false);
   const [showBuildModal, setShowBuildModal] = useState(false);
   
+  // Runway & Burn Simulator State
+  const [cashInBank, setCashInBank] = useState(120000);
+  const [monthlyBurn, setMonthlyBurn] = useState(10000);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(2000);
+  
   // Validation Form State
   const [idea, setIdea] = useState('');
   const [problem, setProblem] = useState('');
@@ -365,9 +370,153 @@ export default function Dashboard({ profile, setProfile, validationReports, setV
                 </div>
               </div>
             </div>
-          </div>
+        </div>
 
-          {/* Recommended Next Actions */}
+        {/* Runway & Burn Simulator (Unique Feature) */}
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ color: 'var(--success)' }}>⚡</span> Cash Runway & Net Burn Simulator
+          </h3>
+          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+            Simulate monthly cash runway by modeling cash reserves, revenues, and operating expenditures.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Input Slider 1: Cash in Bank */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              <div className="flex-between" style={{ fontSize: '0.8rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Cash in Bank (USD/INR):</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cashInBank.toLocaleString()}</span>
+              </div>
+              <input 
+                type="range" 
+                min="5000" 
+                max="500000" 
+                step="5000" 
+                value={cashInBank} 
+                onChange={(e) => setCashInBank(Number(e.target.value))} 
+                style={{ width: '100%', height: '4px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+            </div>
+
+            {/* Input Slider 2: Monthly Operating Expense */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              <div className="flex-between" style={{ fontSize: '0.8rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Monthly Operating Expense:</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{monthlyBurn.toLocaleString()}</span>
+              </div>
+              <input 
+                type="range" 
+                min="1000" 
+                max="50000" 
+                step="500" 
+                value={monthlyBurn} 
+                onChange={(e) => setMonthlyBurn(Number(e.target.value))} 
+                style={{ width: '100%', height: '4px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+            </div>
+
+            {/* Input Slider 3: Monthly Revenue */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+              <div className="flex-between" style={{ fontSize: '0.8rem' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Monthly Revenue:</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{monthlyRevenue.toLocaleString()}</span>
+              </div>
+              <input 
+                type="range" 
+                min="0" 
+                max="30000" 
+                step="500" 
+                value={monthlyRevenue} 
+                onChange={(e) => setMonthlyRevenue(Number(e.target.value))} 
+                style={{ width: '100%', height: '4px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+              />
+            </div>
+
+            {/* Calculations Breakdown */}
+            <div style={{ 
+              background: 'rgba(255,255,255,0.02)', 
+              border: '1px solid var(--border-light)', 
+              padding: '0.85rem', 
+              borderRadius: 'var(--radius-sm)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+              fontSize: '0.82rem',
+              marginTop: '0.25rem'
+            }}>
+              <div className="flex-between">
+                <span style={{ color: 'var(--text-secondary)' }}>Net Burn Rate:</span>
+                <span style={{ fontWeight: 600, color: monthlyBurn - monthlyRevenue > 0 ? 'var(--danger)' : 'var(--success)' }}>
+                  {(monthlyBurn - monthlyRevenue).toLocaleString()} / mo
+                </span>
+              </div>
+              <div className="flex-between">
+                <span style={{ color: 'var(--text-secondary)' }}>Total Runway Safety:</span>
+                <span style={{ fontWeight: 800, color: monthlyBurn - monthlyRevenue <= 0 ? 'var(--success)' : (cashInBank / (monthlyBurn - monthlyRevenue)) < 6 ? 'var(--danger)' : 'var(--warning)' }}>
+                  {monthlyBurn - monthlyRevenue <= 0 ? 'Infinite (Revenue Surplus)' : `${(cashInBank / (monthlyBurn - monthlyRevenue)).toFixed(1)} Months`}
+                </span>
+              </div>
+
+              {/* Dynamic Progress Bar */}
+              <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden', marginTop: '0.25rem' }}>
+                <div style={{
+                  height: '100%',
+                  width: monthlyBurn - monthlyRevenue <= 0 ? '100%' : `${Math.min(100, ((cashInBank / (monthlyBurn - monthlyRevenue)) / 24) * 100)}%`,
+                  background: monthlyBurn - monthlyRevenue <= 0 
+                    ? 'linear-gradient(90deg, #10B981, #059669)'
+                    : (cashInBank / (monthlyBurn - monthlyRevenue)) < 6 
+                    ? 'linear-gradient(90deg, #EF4444, #DC2626)' 
+                    : (cashInBank / (monthlyBurn - monthlyRevenue)) < 12
+                    ? 'linear-gradient(90deg, #F59E0B, #D97706)'
+                    : 'linear-gradient(90deg, #6366F1, #06B6D4)',
+                  transition: 'width 0.3s ease, background 0.3s ease'
+                }} />
+              </div>
+            </div>
+
+            {/* Dynamic Alert Messages */}
+            {monthlyBurn - monthlyRevenue > 0 && (cashInBank / (monthlyBurn - monthlyRevenue)) < 6 ? (
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.05)',
+                border: '1px solid rgba(239, 68, 68, 0.15)',
+                color: 'var(--danger)',
+                padding: '0.75rem',
+                borderRadius: '6px',
+                fontSize: '0.72rem',
+                lineHeight: 1.4
+              }}>
+                ⚠️ <strong>CRITICAL RED ZONE:</strong> Your runway is less than 6 months. You must begin pitching warm investors immediately. Visit the <strong>Network Hub</strong> to request introductions.
+              </div>
+            ) : monthlyBurn - monthlyRevenue > 0 && (cashInBank / (monthlyBurn - monthlyRevenue)) < 12 ? (
+              <div style={{
+                background: 'rgba(245, 158, 11, 0.05)',
+                border: '1px solid rgba(245, 158, 11, 0.15)',
+                color: 'var(--warning)',
+                padding: '0.75rem',
+                borderRadius: '6px',
+                fontSize: '0.72rem',
+                lineHeight: 1.4
+              }}>
+                ⚡ <strong>PRE-WARNING ZONE:</strong> Your runway is under 12 months. Start drafting your Sequoia Pitch storyboard in the <strong>Roadmap page</strong> to prepare for seed outreach.
+              </div>
+            ) : (
+              <div style={{
+                background: 'rgba(16, 185, 129, 0.05)',
+                border: '1px solid rgba(16, 185, 129, 0.15)',
+                color: 'var(--success)',
+                padding: '0.75rem',
+                borderRadius: '6px',
+                fontSize: '0.72rem',
+                lineHeight: 1.4
+              }}>
+                ✅ <strong>SAFE RUNWAY ZONE:</strong> Your business has healthy runway safety. Focus on product market fit objectives and MVP development milestones.
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recommended Next Actions */}
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', flex: 1 }}>
             <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <CheckCircle size={18} style={{ color: 'var(--success)' }} /> Recommended Actions
