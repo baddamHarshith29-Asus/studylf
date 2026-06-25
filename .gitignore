@@ -24,3 +24,18 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Environment variables containing sensitive API keys
+.env
+.env*.local
+
+# Database files
+*.db
+*.sqlite
+
+# Python virtual envs and caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
