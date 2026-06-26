@@ -71,11 +71,16 @@ class AIService:
             f"Question: {question}\n"
             f"Founder's Answer: {answer}\n\n"
             "Score the response out of 10. Be constructive but honest.\n"
+            "Grade the response based on the following metrics:\n"
+            "- Relevance: Did they answer the specific question asked?\n"
+            "- Metrics & Data: Did they back up claims with concrete facts/numbers/traction?\n"
+            "- Delivery Structure: Did they structure it cleanly (e.g., using the STAR method)?\n"
+            "- Clarity & Professionalism: Is the tone appropriate for VCs?\n\n"
             "Output MUST be in JSON format matching this schema:\n"
             "{\n"
             "  \"score\": int (1 to 10),\n"
-            "  \"critique\": \"Critique narrative text summarizing strengths and gaps in their answer.\",\n"
-            "  \"tips\": \"Tip: Actions they should take next to improve the pitch.\"\n"
+            "  \"critique\": \"Critique narrative text summarizing strengths and gaps in their answer, referring to the above metrics.\",\n"
+            "  \"tips\": \"Tip: Specific actionable steps they should take next to improve this specific pitch response.\"\n"
             "}"
         )
         

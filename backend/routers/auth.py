@@ -112,7 +112,7 @@ def register(response: Response, data: UserCreate, db = Depends(get_db)):
         )
         
         # Build email verification link (pointing to frontend /verify-email)
-        verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+        verification_link = f"http://localhost:3001/verify-email?token={verification_token}"
         send_otp_email(user.email, otp_code, verification_link)
         
         response_data: Dict[str, Any] = {
@@ -156,7 +156,7 @@ def login(response: Response, data: UserLogin, db = Depends(get_db)):
             upsert=True
         )
         
-        verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+        verification_link = f"http://localhost:3001/verify-email?token={verification_token}"
         send_otp_email(user.email, otp_code, verification_link)
         
         raise HTTPException(
@@ -228,7 +228,7 @@ def resend_otp(data: ResendOtpRequest, db = Depends(get_db)):
         upsert=True
     )
     
-    verification_link = f"http://localhost:3000/verify-email?token={verification_token}"
+    verification_link = f"http://localhost:3001/verify-email?token={verification_token}"
     send_otp_email(email, otp_code, verification_link)
     return {"success": True, "message": "Verification link and OTP code resent"}
 
@@ -349,11 +349,21 @@ async def google_login(response: Response, data: GoogleLoginRequest, db = Depend
             "user": {"id": user.id, "email": user.email, "name": user.name}
         }
         
-    # Verify Firebase ID token if project ID is provided, else fallback to standard Google Identity Services token
-    if firebase_project_id and firebase_project_id != "your_firebase_project_id":
+    # Determine token type by inspecting the unverified issuer claim
+    import jwt as pyjwt
+    is_firebase_token = False
+    try:
+        unverified_payload = pyjwt.decode(credential, options={"verify_signature": False})
+        iss = unverified_payload.get("iss", "")
+        if "securetoken.google.com" in iss:
+            is_firebase_token = True
+    except Exception as e:
+        logger.warning(f"Could not parse unverified token payload: {e}")
+        
+    # Verify Firebase ID token if token is a Firebase token and project ID is provided
+    if is_firebase_token and firebase_project_id and firebase_project_id != "your_firebase_project_id":
         try:
             logger.info("Verifying Firebase ID Token...")
-            import jwt as pyjwt
             # Fetch Google public keys
             async with httpx.AsyncClient() as client:
                 r = await client.get("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com")

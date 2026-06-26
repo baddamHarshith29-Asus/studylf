@@ -30,4 +30,8 @@ Analyze the startup viability and return a raw JSON object conforming EXACTLY to
     "behavior": "Where they spend time/tools they use"
   }}
 }}
+IMPORTANT:
+1. Ground your market size calculations and competitor mapping strictly on the provided real-time search context.
+2. Avoid arbitrary projections. If competitor funding or pricing is not present in the search context, use 'N/A' or 'Unknown' rather than inventing fictional data.
+3. Ensure the output scores are logically consistent with your critique and market research findings.
 Do not include any explanation markdown outside the JSON block. Return ONLY the raw JSON."""

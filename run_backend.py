@@ -28,11 +28,11 @@ def main():
     # Set PythonPath to include the root directory so imports resolve correctly
     os.environ["PYTHONPATH"] = os.getcwd()
     
-    # Run uvicorn on port 3001 (which Vite proxies /api to)
-    print("Starting STUDLYF FastAPI backend on http://localhost:3001 ...")
+    # Run uvicorn on port 3002 (which Vite proxies /api to from 3001)
+    print("Starting STUDLYF FastAPI backend on http://localhost:3002 ...")
     try:
         import uvicorn
-        uvicorn.run("backend.main:app", host="127.0.0.1", port=3001, reload=True)
+        uvicorn.run("backend.main:app", host="127.0.0.1", port=3002, reload=True)
     except KeyboardInterrupt:
         print("\nBackend stopped.")
     except Exception as e:

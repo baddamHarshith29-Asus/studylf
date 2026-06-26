@@ -6,7 +6,7 @@ from backend.core.logger import logger
 class GeminiProvider(BaseAIProvider):
     def __init__(self):
         self.api_key = settings.GEMINI_API_KEY
-        self.model_name = "gemini-2.5-flash-lite"
+        self.model_name = "gemini-2.5-flash"
         self._llm = None
         self._init_client()
 

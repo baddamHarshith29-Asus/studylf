@@ -87,8 +87,12 @@ def send_otp_email(to_email: str, otp_code: str, verification_link: str = None) 
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             }
+            from_sender = "STUDLYF <onboarding@resend.dev>"
+            if settings.SMTP_SENDER and settings.SMTP_SENDER != "onboarding@studlyf.com":
+                from_sender = f"STUDLYF <{settings.SMTP_SENDER}>"
+                
             payload = {
-                "from": "STUDLYF <onboarding@resend.dev>",
+                "from": from_sender,
                 "to": to_email,
                 "subject": subject,
                 "html": html_content

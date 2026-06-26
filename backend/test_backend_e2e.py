@@ -164,14 +164,27 @@ def test_api_endpoints():
             "email": test_email,
             "password": test_password
         })
-        user_id = None
         if reg_res.status_code == 200 and reg_res.json().get("success"):
             log_test_result("POST /api/auth/register", True)
-            token = reg_res.json().get("access_token")
-            headers = {"Authorization": f"Bearer {token}"}
-            user_id = reg_res.json().get("user", {}).get("id")
         else:
             log_test_result("POST /api/auth/register", False, f"Status: {reg_res.status_code}, Body: {reg_res.text}")
+            return
+            
+        # 1.5. Verify OTP (required for verification flow)
+        otp_record = active_db.otps.find_one({"email": test_email})
+        if otp_record:
+            otp_code = otp_record["otp"]
+            verify_res = client.post("/api/auth/verify-otp", json={
+                "email": test_email,
+                "otp": otp_code
+            })
+            if verify_res.status_code == 200:
+                log_test_result("POST /api/auth/verify-otp", True)
+            else:
+                log_test_result("POST /api/auth/verify-otp", False, f"Status: {verify_res.status_code}, Body: {verify_res.text}")
+                return
+        else:
+            log_test_result("POST /api/auth/verify-otp", False, "No OTP record found in database")
             return
             
         # 2. Login
@@ -181,8 +194,12 @@ def test_api_endpoints():
         })
         if login_res.status_code == 200 and login_res.json().get("access_token"):
             log_test_result("POST /api/auth/login", True)
+            token = login_res.json().get("access_token")
+            headers = {"Authorization": f"Bearer {token}"}
+            user_id = login_res.json().get("user", {}).get("id")
         else:
             log_test_result("POST /api/auth/login", False, f"Status: {login_res.status_code}, Body: {login_res.text}")
+            return
 
         # 3. Get profile
         profile_res = client.get("/api/profile", headers=headers)
