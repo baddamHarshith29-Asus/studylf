@@ -52,10 +52,10 @@ export default function StartupProfile() {
   const fetchStartupOpportunities = async () => {
     setLoadingOpps(true);
     try {
-      const oppRes = await apiFetch('/api/opportunities');
+      const oppRes = await apiFetch('/api/opportunities/list');
       if (oppRes.ok) {
         const oppData = await oppRes.json();
-        // filter opportunities belonging to my startup ID
+        // filter opportunities belonging to my startup
         const myOpps = oppData.filter((opp: any) => opp.startupName === profile.startupName);
         setOpportunities(myOpps);
       }
@@ -70,6 +70,7 @@ export default function StartupProfile() {
       setLoadingOpps(false);
     }
   };
+
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();

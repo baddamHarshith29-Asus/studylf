@@ -13,6 +13,7 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const response = await fetch(endpoint, {
     ...options,
     headers,
+    credentials: "include"
   });
 
   if (response.status === 401) {

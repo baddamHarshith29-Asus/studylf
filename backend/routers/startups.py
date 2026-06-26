@@ -18,9 +18,11 @@ def update_startup_profile(data: Dict[str, Any], db = Depends(get_db), current_u
     if not current_user:
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
-        return StartupService.update_profile(db, current_user, data)
+        profile = StartupService.update_profile(db, current_user, data)
+        return {"success": True, "profile": profile}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 @router.get("/startups/directory")
 def get_startups_directory(db = Depends(get_db)):

@@ -25,6 +25,7 @@ const ProfileSettings   = lazy(() => import('../pages/ProfileSettings'));
 
 const LoginPage = lazy(() => import('../pages/auth/Login'));
 const RegisterPage = lazy(() => import('../pages/auth/Register'));
+const VerifyEmailPage = lazy(() => import('../pages/auth/VerifyEmail'));
 
 const PageLoader: React.FC = () => (
   <div className="onboard-container" style={{ flexDirection: 'column', gap: '1.5rem' }}>
@@ -64,14 +65,27 @@ const AppRoutes: React.FC = () => {
 
   if (loading) return <PageLoader />;
 
-  // Not registered → onboarding
-  if (!profile.registered) {
+  // Not logged in -> Redirect to login / register / verify-email
+  if (!profile.email) {
     return (
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="*"         element={<Onboarding />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="*"         element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
+  // Logged in but not onboarded -> Redirect to onboarding
+  if (!profile.registered) {
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="*"           element={<Navigate to="/onboarding" replace />} />
         </Routes>
       </Suspense>
     );

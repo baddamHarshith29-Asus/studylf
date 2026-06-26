@@ -274,15 +274,17 @@ export default function Dashboard() {
   ] : [];
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative' }}>
+      <div className="radial-glow-spot" style={{ top: '-10%', right: '-10%', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 60%)' }} />
+      <div className="radial-glow-spot" style={{ bottom: '20%', left: '-15%', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.05) 0%, transparent 65%)' }} />
+
       {/* Top Banner */}
-      <div className="page-header">
+      <div className="page-header" style={{ position: 'relative', zIndex: 5 }}>
         <div className="page-title-section">
-          <h2 className="gradient-text">Welcome back, {profile.name}</h2>
-          <p>Layer 2 Connected Command Center — Orchestrating your startup journey.</p>
+          <h2 className="gradient-text" style={{ fontSize: '1.85rem' }}>Welcome back, {profile.name}</h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem' }}>Layer 2 Connected Command Center — Orchestrating your startup journey.</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
           <button onClick={() => setShowValModal(true)} className="btn btn-primary">
             <Plus size={16} /> Validate Idea
           </button>
@@ -293,66 +295,55 @@ export default function Dashboard() {
       </div>
 
       {/* Stepper Card */}
-      <div className="glass-card" style={{ padding: '1.25rem 1.5rem' }}>
-        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.05rem', marginBottom: '1.25rem' }}>
-          <Compass size={18} style={{ color: 'var(--primary)' }} /> Founder Journey Stepper
+      <div className="glass-card" style={{ padding: '1.5rem', position: 'relative', zIndex: 5 }}>
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', fontSize: '1.05rem', marginBottom: '1.5rem', fontWeight: 700 }}>
+          <Compass size={18} style={{ color: 'var(--secondary)' }} /> Founder Journey Stepper
         </h3>
         <div style={{ 
           display: 'flex', 
           gap: '1rem', 
           alignItems: 'center',
           overflowX: 'auto',
-          paddingBottom: '0.5rem',
+          paddingBottom: '0.75rem',
           scrollbarWidth: 'thin'
         }}>
           {steps.map((st, idx) => (
             <div 
               key={idx} 
               onClick={() => st.action ? st.action() : navigate(st.path)}
+              className="flex-center"
               style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                textAlign: 'center',
+                padding: '0.6rem 1.15rem', 
+                background: st.isCompleted ? 'rgba(16, 185, 129, 0.07)' : 'rgba(255, 255, 255, 0.02)',
+                border: st.isCompleted ? '1px solid rgba(16, 185, 129, 0.25)' : '1px solid var(--border-light)',
+                borderRadius: '24px',
+                gap: '0.6rem',
                 cursor: 'pointer',
-                opacity: st.isCompleted ? 1 : 0.45,
-                transition: 'opacity 0.2s ease',
-                minWidth: '90px',
-                flexShrink: 0
+                opacity: st.isCompleted ? 1 : 0.55,
+                transition: 'all 0.25s ease',
+                flexShrink: 0,
+                boxShadow: st.isCompleted ? '0 2px 10px rgba(16, 185, 129, 0.05)' : 'none'
               }}
             >
-              <div style={{ 
-                width: '32px', 
-                height: '32px', 
-                borderRadius: '50%', 
-                background: st.isCompleted 
-                  ? 'var(--success-glow)' 
-                  : 'rgba(255,255,255,0.03)',
-                border: st.isCompleted 
-                  ? '1px solid var(--success)' 
-                  : '1px solid var(--border-light)',
-                display: 'flex', 
-                alignItems: 'center', 
+              <div style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                background: st.isCompleted ? 'var(--success)' : 'rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
-                color: st.isCompleted ? 'var(--success)' : 'var(--text-secondary)',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                marginBottom: '0.4rem',
-                boxShadow: st.isCompleted ? '0 0 10px rgba(16,185,129,0.2)' : 'none'
+                color: st.isCompleted ? '#fff' : 'var(--text-secondary)',
+                fontSize: '0.7rem',
+                fontWeight: 'bold'
               }}>
                 {st.isCompleted ? '✓' : idx + 1}
               </div>
-              <span style={{ 
-                fontSize: '0.66rem', 
-                color: 'var(--text-primary)', 
-                fontWeight: st.isCompleted ? 600 : 400,
-                whiteSpace: 'nowrap',
-                maxWidth: '85px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis'
-              }}>
-                {st.label}
-              </span>
+              <span style={{
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                color: st.isCompleted ? '#fff' : 'var(--text-secondary)'
+              }}>{st.label}</span>
             </div>
           ))}
         </div>
@@ -360,20 +351,21 @@ export default function Dashboard() {
 
       {/* Basic Metrics Row */}
       <div className="dashboard-metrics">
-        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden' }}>
-          <div style={{
-            position: 'absolute', top: 0, right: 0, width: '70px', height: '70px',
-            background: 'conic-gradient(var(--success) 0deg, transparent 0deg)',
-            opacity: 0.05, borderRadius: '50%'
-          }} />
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Startup Venture</span>
-          <span className="metric-value" style={{ fontSize: '1.25rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.startupName}</span>
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ position: 'absolute', top: '10%', right: '8%', color: 'var(--primary)', opacity: 0.12 }}>
+            <Briefcase size={36} />
+          </div>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Startup Venture</span>
+          <span className="metric-value" style={{ fontSize: '1.35rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 800 }}>{profile.startupName}</span>
           <span className="badge badge-primary" style={{ alignSelf: 'flex-start' }}>{profile.industry}</span>
         </div>
 
-        <div className="metric-card">
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Current Stage</span>
-          <span className="metric-value">{profile.stage}</span>
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ position: 'absolute', top: '10%', right: '8%', color: 'var(--secondary)', opacity: 0.12 }}>
+            <Layers size={36} />
+          </div>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Stage</span>
+          <span className="metric-value" style={{ fontSize: '1.35rem', fontWeight: 800 }}>{profile.stage}</span>
           <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.25rem' }}>
             {['Idea', 'Validation', 'MVP', 'Revenue', 'Fundraising'].map((stg) => (
               <div 
@@ -383,76 +375,90 @@ export default function Dashboard() {
                   height: '4px', 
                   borderRadius: '2px', 
                   backgroundColor: profile.stage === stg || ['Idea', 'Validation', 'MVP', 'Revenue', 'Fundraising'].indexOf(profile.stage) > ['Idea', 'Validation', 'MVP', 'Revenue', 'Fundraising'].indexOf(stg) 
-                    ? 'var(--primary)' 
-                    : 'rgba(255,255,255,0.05)' 
+                    ? 'var(--secondary)' 
+                    : 'rgba(255,255,255,0.06)' 
                 }} 
               />
             ))}
           </div>
         </div>
 
-        <div className="metric-card">
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>AI Validation Reports</span>
-          <span className="metric-value">{validationReports.length}</span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Latest: {validationReports[0]?.date || 'None'}</span>
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ position: 'absolute', top: '10%', right: '8%', color: 'var(--primary)', opacity: 0.12 }}>
+            <Sparkles size={36} />
+          </div>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI Validation Reports</span>
+          <span className="metric-value" style={{ fontSize: '1.35rem', fontWeight: 800 }}>{validationReports.length}</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Latest: {validationReports[0]?.date || 'None'}</span>
         </div>
 
-        <div className="metric-card">
-          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Venture Health Score</span>
-          <span className="metric-value" style={{ color: 'var(--success)' }}>
+        <div className="metric-card" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ position: 'absolute', top: '10%', right: '8%', color: 'var(--success)', opacity: 0.12 }}>
+            <Activity size={36} />
+          </div>
+          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Venture Health Score</span>
+          <span className="metric-value" style={{ color: 'var(--success)', fontSize: '1.35rem', fontWeight: 800 }}>
             {dashboardData.startupHealthScore}%
           </span>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Grounded scoring mechanism</span>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>Grounded scoring mechanism</span>
         </div>
       </div>
 
-      <div className="grid-2">
+      <div className="grid-2" style={{ position: 'relative', zIndex: 5 }}>
         {/* Left Column: Command Center Gauge & Stats */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
           {/* Health Gauge & Readiness Indicators */}
           <div className="glass-card grid-2" style={{ alignItems: 'center', gap: '1.5rem' }}>
-            <div className="flex-center" style={{ flexDirection: 'column', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-light)' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>Health Index</span>
+            <div className="flex-center" style={{ 
+              flexDirection: 'column', 
+              padding: '1.25rem 1rem', 
+              background: 'rgba(255,255,255,0.01)', 
+              borderRadius: 'var(--radius-md)', 
+              border: '1px solid var(--border-light)',
+              boxShadow: 'inset 0 0 12px rgba(255,255,255,0.01)'
+            }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Health Index</span>
               <div style={{
-                width: '100px',
-                height: '100px',
+                width: '104px',
+                height: '104px',
                 borderRadius: '50%',
                 background: `conic-gradient(var(--success) ${dashboardData.startupHealthScore * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 position: 'relative',
-                boxShadow: '0 0 15px rgba(16,185,129,0.2)'
+                boxShadow: '0 0 20px rgba(16,185,129,0.15)'
               }}>
                 <div style={{
-                  width: '84px',
-                  height: '84px',
+                  width: '88px',
+                  height: '88px',
                   borderRadius: '50%',
-                  background: 'var(--bg-card)',
+                  background: 'var(--bg-popover)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '1.6rem',
+                  fontSize: '1.65rem',
                   fontWeight: 800,
                   fontFamily: 'var(--font-heading)',
-                  color: '#fff'
+                  color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.02)'
                 }}>{dashboardData.startupHealthScore}%</div>
               </div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <h3 style={{ fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Award size={18} style={{ color: 'var(--warning)' }} /> Funding Readiness
+              <h3 style={{ fontSize: '1.05rem', display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 700 }}>
+                <Award size={18} style={{ color: 'var(--warning)', filter: 'drop-shadow(0 0 4px rgba(245,158,11,0.3))' }} /> Funding Readiness
               </h3>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem' }}>
-                <span style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--warning)' }}>{dashboardData.fundingReadiness}%</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>preparedness index</span>
+                <span style={{ fontSize: '2.1rem', fontWeight: 800, color: 'var(--warning)', fontFamily: 'var(--font-heading)' }}>{dashboardData.fundingReadiness}%</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 500 }}>preparedness index</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.25rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.25rem' }}>
                 {dashboardData.fundingReadinessReasons && dashboardData.fundingReadinessReasons.slice(0, 3).map((r: string, idx: number) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-                    <span style={{ color: 'var(--success)' }}>✓</span> {r}
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                    <span style={{ color: 'var(--success)', fontWeight: 'bold' }}>✓</span> {r}
                   </div>
                 ))}
               </div>
@@ -462,13 +468,13 @@ export default function Dashboard() {
           {/* AI Validation Explorer */}
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', minHeight: '400px' }}>
             <div className="flex-between">
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
                 <Activity size={18} style={{ color: 'var(--primary)' }} /> AI Validation Scan
               </h3>
               {validationReports.length > 1 && (
                 <select 
                   className="form-select" 
-                  style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', borderRadius: '4px' }}
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', borderRadius: 'var(--radius-sm)' }}
                   value={selectedReport?.id || ''}
                   onChange={(e) => setSelectedReport(validationReports.find(r => r.id === e.target.value) || null)}
                 >
@@ -481,36 +487,45 @@ export default function Dashboard() {
 
             {selectedReport ? (
               <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <h4 style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginBottom: '0.15rem' }}>Concept scanned:</h4>
-                  <p style={{ fontStyle: 'italic', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>"{selectedReport.startupIdea}"</p>
+                <div style={{ padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                  <h4 style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Concept scanned:</h4>
+                  <p style={{ fontStyle: 'italic', fontSize: '0.86rem', color: 'var(--text-primary)', fontWeight: 500 }}>"{selectedReport.startupIdea}"</p>
                 </div>
 
                 <div className="grid-2" style={{ alignItems: 'center', gap: '1rem' }}>
                   {/* Circular Score Meter */}
-                  <div className="flex-center" style={{ flexDirection: 'column', padding: '0.75rem', background: 'rgba(255,255,255,0.01)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>Validation Score</span>
+                  <div className="flex-center" style={{ 
+                    flexDirection: 'column', 
+                    padding: '1rem 0.75rem', 
+                    background: 'rgba(255,255,255,0.01)', 
+                    borderRadius: 'var(--radius-sm)', 
+                    border: '1px solid var(--border-light)',
+                    boxShadow: 'inset 0 0 10px rgba(255,255,255,0.01)'
+                  }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginBottom: '0.5rem', fontWeight: 600, textTransform: 'uppercase' }}>Overall Score</span>
                     <div style={{
-                      width: '74px',
-                      height: '74px',
+                      width: '76px',
+                      height: '76px',
                       borderRadius: '50%',
                       background: `conic-gradient(var(--primary) ${selectedReport.scores.overall * 3.6}deg, rgba(255,255,255,0.05) 0deg)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      position: 'relative'
+                      position: 'relative',
+                      boxShadow: '0 0 16px rgba(99, 102, 241, 0.12)'
                     }}>
                       <div style={{
-                        width: '60px',
-                        height: '60px',
+                        width: '62px',
+                        height: '62px',
                         borderRadius: '50%',
-                        background: 'var(--bg-card)',
+                        background: 'var(--bg-popover)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '1.25rem',
+                        fontSize: '1.3rem',
                         fontWeight: 800,
-                        color: '#fff'
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.02)'
                       }}>{selectedReport.scores.overall}</div>
                     </div>
                   </div>
@@ -529,40 +544,40 @@ export default function Dashboard() {
                 </div>
 
                 {/* Subscores Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem', textAlign: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', textAlign: 'center' }}>
                   {[
                     { name: 'Demand', val: selectedReport.scores.demand },
                     { name: 'Competition', val: selectedReport.scores.competition },
                     { name: 'Scalability', val: selectedReport.scores.scalability },
                     { name: 'Revenue', val: selectedReport.scores.revenuePotential },
                   ].map((sub, i) => (
-                    <div key={i} style={{ padding: '0.4rem', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
-                      <div style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', marginBottom: '0.15rem' }}>{sub.name}</div>
-                      <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>{sub.val}</div>
+                    <div key={i} style={{ padding: '0.5rem 0.25rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.2rem', fontWeight: 600, textTransform: 'uppercase' }}>{sub.name}</div>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff' }}>{sub.val}</div>
                     </div>
                   ))}
                 </div>
 
                 {/* Competitors and Customer */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem' }}>
-                  <p><strong>Market Size:</strong> {selectedReport.marketResearch.marketSize}</p>
-                  <p><strong>Growth Trend:</strong> {selectedReport.marketResearch.growthTrends}</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                  <p><strong>Market Size:</strong> <span style={{ color: '#fff', fontWeight: 500 }}>{selectedReport.marketResearch.marketSize}</span></p>
+                  <p><strong>Growth Trend:</strong> <span style={{ color: '#fff', fontWeight: 500 }}>{selectedReport.marketResearch.growthTrends}</span></p>
                   
-                  <div style={{ overflowX: 'auto', marginTop: '0.25rem' }}>
-                    <table style={{ width: '100%', fontSize: '0.75rem', textAlign: 'left', borderCollapse: 'collapse' }}>
+                  <div style={{ overflowX: 'auto', marginTop: '0.5rem' }}>
+                    <table style={{ width: '100%', fontSize: '0.78rem', textAlign: 'left', borderCollapse: 'collapse' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
-                          <th style={{ color: 'var(--text-secondary)', padding: '0.25rem' }}>Competitor</th>
-                          <th style={{ color: 'var(--text-secondary)', padding: '0.25rem' }}>Funding</th>
-                          <th style={{ color: 'var(--text-secondary)', padding: '0.25rem' }}>Type</th>
+                          <th style={{ color: 'var(--text-muted)', padding: '0.4rem', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.68rem' }}>Competitor</th>
+                          <th style={{ color: 'var(--text-muted)', padding: '0.4rem', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.68rem' }}>Funding</th>
+                          <th style={{ color: 'var(--text-muted)', padding: '0.4rem', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.68rem' }}>Type</th>
                         </tr>
                       </thead>
                       <tbody>
                         {selectedReport.competitors.slice(0, 3).map((comp, idx) => (
                           <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
-                            <td style={{ padding: '0.35rem 0.25rem', fontWeight: 600 }}>{comp.name}</td>
-                            <td style={{ padding: '0.35rem 0.25rem' }}>{comp.funding}</td>
-                            <td style={{ padding: '0.35rem 0.25rem' }}><span className={`badge ${comp.type === 'Direct' ? 'badge-danger' : 'badge-primary'}`} style={{ padding: '0.1rem 0.3, px', fontSize: '0.6rem' }}>{comp.type}</span></td>
+                            <td style={{ padding: '0.55rem 0.4rem', fontWeight: 600, color: '#fff' }}>{comp.name}</td>
+                            <td style={{ padding: '0.55rem 0.4rem' }}>{comp.funding}</td>
+                            <td style={{ padding: '0.55rem 0.4rem' }}><span className={`badge ${comp.type === 'Direct' ? 'badge-danger' : 'badge-primary'}`} style={{ padding: '0.1rem 0.4rem', fontSize: '0.62rem' }}>{comp.type}</span></td>
                           </tr>
                         ))}
                       </tbody>
@@ -594,53 +609,54 @@ export default function Dashboard() {
           {/* GPS Roadmap & Tasks checklist */}
           <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <div className="flex-between">
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Compass size={18} style={{ color: 'var(--secondary)' }} /> GPS stage checklist ({profile.stage})
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+                <Compass size={18} style={{ color: 'var(--secondary)', filter: 'drop-shadow(0 0 3px rgba(6,182,212,0.3))' }} /> GPS stage checklist ({profile.stage})
               </h3>
               <button 
                 onClick={() => navigate('/roadmap')} 
                 className="btn btn-secondary" 
-                style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem', borderRadius: '4px' }}
+                style={{ padding: '0.3rem 0.6rem', fontSize: '0.72rem', borderRadius: '4px' }}
               >
                 Go to GPS
               </button>
             </div>
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ flex: 1, height: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '9999px', overflow: 'hidden' }}>
                 <div style={{ 
                   height: '100%', 
                   width: `${dashboardData.roadmapProgress}%`, 
                   background: 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)',
-                  boxShadow: '0 0 8px var(--primary)'
+                  boxShadow: '0 0 10px var(--primary)',
+                  borderRadius: '9999px'
                 }} />
               </div>
               <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--secondary)' }}>{dashboardData.roadmapProgress}%</span>
             </div>
-
+ 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {steps.slice(0, 4).map((st, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', padding: '0.4rem 0.5rem', background: 'rgba(255,255,255,0.01)', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
-                  <input type="checkbox" checked={st.isCompleted} disabled style={{ accentColor: 'var(--primary)' }} />
-                  <span style={{ flex: 1, color: st.isCompleted ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: st.isCompleted ? 'line-through' : 'none' }}>{st.label} Checklist Objective</span>
-                  <span className="badge badge-primary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.3rem' }}>Core</span>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', padding: '0.5rem 0.75rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+                  <input type="checkbox" checked={st.isCompleted} readOnly style={{ accentColor: 'var(--primary)' }} />
+                  <span style={{ flex: 1, color: st.isCompleted ? 'var(--text-muted)' : 'var(--text-primary)', textDecoration: st.isCompleted ? 'line-through' : 'none', fontWeight: 500 }}>{st.label} Checklist Objective</span>
+                  <span className="badge badge-primary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.35rem' }}>Core</span>
                 </div>
               ))}
             </div>
           </div>
-
+ 
           {/* Runway Simulator */}
-          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: 'var(--success)' }}>⚡</span> Runway & Burn Simulator
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
+              <span style={{ color: 'var(--success)', textShadow: '0 0 6px rgba(16,185,129,0.4)' }}>⚡</span> Runway & Burn Simulator
             </h3>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+ 
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Cash in Bank */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                 <div className="flex-between" style={{ fontSize: '0.78rem' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Cash in Bank (USD):</span>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>{cashInBank.toLocaleString()}</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Cash in Bank (USD):</span>
+                  <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.86rem' }}>${cashInBank.toLocaleString()}</span>
                 </div>
                 <input 
                   type="range" 
@@ -649,15 +665,15 @@ export default function Dashboard() {
                   step="5000" 
                   value={cashInBank} 
                   onChange={(e) => setCashInBank(Number(e.target.value))} 
-                  style={{ width: '100%', height: '3px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                  className="premium-slider"
                 />
               </div>
-
+ 
               {/* Monthly Burn */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                 <div className="flex-between" style={{ fontSize: '0.78rem' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Monthly Burn:</span>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>{monthlyBurn.toLocaleString()}</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Monthly Burn:</span>
+                  <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.86rem' }}>${monthlyBurn.toLocaleString()}</span>
                 </div>
                 <input 
                   type="range" 
@@ -666,15 +682,15 @@ export default function Dashboard() {
                   step="500" 
                   value={monthlyBurn} 
                   onChange={(e) => setMonthlyBurn(Number(e.target.value))} 
-                  style={{ width: '100%', height: '3px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                  className="premium-slider"
                 />
               </div>
-
+ 
               {/* Monthly Revenue */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
                 <div className="flex-between" style={{ fontSize: '0.78rem' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Monthly Revenue:</span>
-                  <span style={{ fontWeight: 600, color: '#fff' }}>{monthlyRevenue.toLocaleString()}</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Monthly Revenue:</span>
+                  <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.86rem' }}>${monthlyRevenue.toLocaleString()}</span>
                 </div>
                 <input 
                   type="range" 
@@ -683,30 +699,31 @@ export default function Dashboard() {
                   step="500" 
                   value={monthlyRevenue} 
                   onChange={(e) => setMonthlyRevenue(Number(e.target.value))} 
-                  style={{ width: '100%', height: '3px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                  className="premium-slider"
                 />
               </div>
-
+ 
               {/* Runway Results */}
               <div style={{ 
-                background: 'rgba(255,255,255,0.02)', 
+                background: 'rgba(255,255,255,0.01)', 
                 border: '1px solid var(--border-light)', 
-                padding: '0.75rem', 
-                borderRadius: 'var(--radius-sm)',
+                padding: '1rem', 
+                borderRadius: 'var(--radius-md)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.4rem',
-                fontSize: '0.78rem'
+                gap: '0.5rem',
+                fontSize: '0.82rem',
+                boxShadow: 'inset 0 0 8px rgba(255,255,255,0.01)'
               }}>
                 <div className="flex-between">
-                  <span style={{ color: 'var(--text-secondary)' }}>Net Burn Rate:</span>
-                  <span style={{ fontWeight: 600, color: monthlyBurn - monthlyRevenue > 0 ? 'var(--danger)' : 'var(--success)' }}>
-                    {(monthlyBurn - monthlyRevenue).toLocaleString()} / mo
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Net Burn Rate:</span>
+                  <span style={{ fontWeight: 700, color: monthlyBurn - monthlyRevenue > 0 ? 'var(--danger)' : 'var(--success)' }}>
+                    ${(monthlyBurn - monthlyRevenue).toLocaleString()} / mo
                   </span>
                 </div>
                 <div className="flex-between">
-                  <span style={{ color: 'var(--text-secondary)' }}>Safety safety Runway:</span>
-                  <span style={{ fontWeight: 800, color: monthlyBurn - monthlyRevenue <= 0 ? 'var(--success)' : (cashInBank / (monthlyBurn - monthlyRevenue)) < 6 ? 'var(--danger)' : 'var(--warning)' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Venture Runway:</span>
+                  <span style={{ fontWeight: 800, color: monthlyBurn - monthlyRevenue <= 0 ? 'var(--success)' : (cashInBank / (monthlyBurn - monthlyRevenue)) < 6 ? 'var(--danger)' : 'var(--warning)', fontSize: '0.9rem' }}>
                     {monthlyBurn - monthlyRevenue <= 0 ? 'Infinite (Surplus)' : `${(cashInBank / (monthlyBurn - monthlyRevenue)).toFixed(1)} Months`}
                   </span>
                 </div>

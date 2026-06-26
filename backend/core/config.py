@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "STUDLYF Backend"
     API_V1_STR: str = "/api"
+    DEBUG_MODE: bool = os.getenv("DEBUG_MODE", "False").lower() == "true"
     
     # Security
     SECRET_KEY: str = os.getenv("JWT_SECRET", "supersecretkeychangeinproduction12345678")
@@ -32,6 +33,16 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: Optional[str] = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET: Optional[str] = os.getenv("GOOGLE_CLIENT_SECRET")
+    
+    # SMTP Configuration (e.g. Brevo)
+    SMTP_HOST: Optional[str] = os.getenv("SMTP_HOST")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER")
+    SMTP_PASSWORD: Optional[str] = os.getenv("SMTP_PASSWORD")
+    SMTP_SENDER: str = os.getenv("SMTP_SENDER", "onboarding@studlyf.com")
+
+    # Firebase Config
+    FIREBASE_PROJECT_ID: Optional[str] = os.getenv("FIREBASE_PROJECT_ID")
     
     # Email Senders
     RESEND_API_KEY: Optional[str] = os.getenv("RESEND_API_KEY")

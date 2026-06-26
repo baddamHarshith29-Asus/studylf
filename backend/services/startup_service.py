@@ -1,5 +1,6 @@
 import re
 from typing import Dict, Any, List, Optional
+from bson import ObjectId
 from backend.models.models import User, Profile
 
 class StartupService:

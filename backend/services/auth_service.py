@@ -21,6 +21,8 @@ class AuthService:
             "email": data.email,
             "name": data.name,
             "password_hash": hashed,
+            "is_verified": False,
+            "google_user": False,
             "created_at": datetime_now
         }
         res = db.users.insert_one(new_user_dict)
@@ -48,6 +50,79 @@ class AuthService:
             "name": data.name,
             "email": data.email,
             "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+            "created_at": datetime_now
+        })
+        
+        # Create startups
+        db.startups.insert_one({
+            "user_id": user_id,
+            "startup_name": "",
+            "industry": "AI & SaaS",
+            "stage": "Idea",
+            "is_public": False,
+            "created_at": datetime_now
+        })
+        
+        user_doc = db.users.find_one({"_id": res.inserted_id})
+        return User(user_doc, db)
+
+    @staticmethod
+    def register_google_user(db, email: str, name: str, avatar: Optional[str] = None) -> User:
+        """Registers a new Google user (pre-verified) or returns an existing one, updating details."""
+        existing_user = db.users.find_one({"email": email})
+        datetime_now = time.time()
+        
+        if existing_user:
+            # Update user to be Google user
+            db.users.update_one(
+                {"_id": existing_user["_id"]},
+                {"$set": {"google_user": True, "is_verified": True}}
+            )
+            # Ensure profile has details
+            user_id = str(existing_user["_id"])
+            db.profiles.update_one(
+                {"user_id": user_id},
+                {"$set": {"updated_at": datetime_now}}
+            )
+            user_doc = db.users.find_one({"_id": existing_user["_id"]})
+            return User(user_doc, db)
+            
+        # Register new Google user
+        new_user_dict = {
+            "email": email,
+            "name": name,
+            "password_hash": "google_oauth_no_password",
+            "is_verified": True,
+            "google_user": True,
+            "created_at": datetime_now
+        }
+        res = db.users.insert_one(new_user_dict)
+        user_id = str(res.inserted_id)
+        
+        avatar_url = avatar or "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+        
+        # Create user profile
+        profile_dict = {
+            "user_id": user_id,
+            "registered": False,
+            "is_public": False,
+            "startup_name": "",
+            "description": "",
+            "industry": "AI & SaaS",
+            "country": "India",
+            "stage": "Idea",
+            "avatar": avatar_url,
+            "created_at": datetime_now,
+            "updated_at": datetime_now
+        }
+        db.profiles.insert_one(profile_dict)
+        
+        # Create founder profile
+        db.founder_profiles.insert_one({
+            "user_id": user_id,
+            "name": name,
+            "email": email,
+            "avatar": avatar_url,
             "created_at": datetime_now
         })
         

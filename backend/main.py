@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from backend.core.config import settings
 from backend.routers import auth, users, startups, validation, roadmap, funding, network, opportunities, copilot, admin, utils, public_profile_router
 from backend.core.logger import logger
@@ -20,6 +22,10 @@ app = FastAPI(
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=f"{settings.API_V1_STR}/redoc"
 )
+
+if os.path.exists("scs"):
+    app.mount("/static", StaticFiles(directory="scs"), name="static")
+
 
 # CORS Setup
 app.add_middleware(

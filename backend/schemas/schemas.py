@@ -15,6 +15,16 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+class GoogleLoginRequest(BaseModel):
+    credential: str
+
+class VerifyOtpRequest(BaseModel):
+    email: EmailStr
+    otp: str
+
+class ResendOtpRequest(BaseModel):
+    email: EmailStr
+
 class ProfileResponse(BaseModel):
     registered: bool
     email: str
