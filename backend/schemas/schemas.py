@@ -63,6 +63,10 @@ class ValidateRequest(BaseModel):
     problemStatement: Optional[str] = None
     customerSegment: Optional[str] = None
     geography: Optional[str] = None
+    startupName: Optional[str] = None
+    solution: Optional[str] = None
+    industry: Optional[str] = None
+    targetAudience: Optional[str] = None
 
 class CompetitorInfo(BaseModel):
     name: str
@@ -98,6 +102,7 @@ class ValidationReportResponse(BaseModel):
     marketResearch: MarketResearchInfo
     competitors: List[CompetitorInfo]
     customerPersona: CustomerPersonaInfo
+    fullAnalysis: Optional[Dict[str, Any]] = None
 
     class Config:
         from_attributes = True
@@ -157,7 +162,7 @@ class SchemeResponse(BaseModel):
     countries: List[str]
     industries: List[str]
     criteria: Dict[str, Any]
-    lastVerified: str
+    lastVerified: Optional[str] = None
 
     class Config:
         from_attributes = True

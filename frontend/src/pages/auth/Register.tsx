@@ -133,8 +133,8 @@ const Register: React.FC = () => {
 
   return (
     <div className="onboard-container bg-grid-pattern" style={{ position: 'relative', overflow: 'hidden' }}>
-      <div className="radial-glow-spot" style={{ top: '-10%', right: '-10%' }} />
-      <div className="radial-glow-spot" style={{ bottom: '-15%', left: '-15%', background: 'radial-gradient(circle, rgba(6, 182, 212, 0.07) 0%, transparent 70%)' }} />
+      <div className="radial-glow-spot" style={{ top: '-10%', right: '-10%', background: 'radial-gradient(circle, rgba(239, 43, 112, 0.04) 0%, transparent 70%)' }} />
+      <div className="radial-glow-spot" style={{ bottom: '-15%', left: '-15%', background: 'radial-gradient(circle, rgba(107, 108, 255, 0.04) 0%, transparent 70%)' }} />
 
       <div className="onboard-card fade-in" style={{ maxWidth: '440px', position: 'relative', zIndex: 10 }}>
         {/* Logo */}
@@ -143,7 +143,7 @@ const Register: React.FC = () => {
             width: '44px', height: '44px', borderRadius: '12px',
             background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 14px rgba(6, 182, 212, 0.4)',
+            boxShadow: '0 4px 14px rgba(239, 43, 112, 0.25)',
             position: 'relative'
           }}>
             <Zap size={22} color="#fff" fill="#fff" />
@@ -151,7 +151,7 @@ const Register: React.FC = () => {
               position: 'absolute',
               inset: '-2px',
               borderRadius: '14px',
-              border: '1px solid rgba(6, 182, 212, 0.3)',
+              border: '1px solid rgba(239, 43, 112, 0.15)',
               animation: 'glowPulse 2s infinite',
               pointerEvents: 'none'
             }} />

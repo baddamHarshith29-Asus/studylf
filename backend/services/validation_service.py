@@ -18,7 +18,11 @@ class ValidationService:
         startup_idea: str, 
         problem_statement: Optional[str] = None, 
         customer_segment: Optional[str] = None, 
-        geography: Optional[str] = None
+        geography: Optional[str] = None,
+        startup_name: Optional[str] = None,
+        solution: Optional[str] = None,
+        industry: Optional[str] = None,
+        target_audience: Optional[str] = None
     ) -> ValidationReport:
         """Invokes RAG pipeline to validate a concept, stores results, and progresses stage to Validation."""
         logger.info(f"Generating validation report for user {user.id}")
@@ -28,7 +32,11 @@ class ValidationService:
             startup_idea=startup_idea,
             problem_statement=problem_statement,
             customer_segment=customer_segment,
-            geography=geography
+            geography=geography,
+            startup_name=startup_name,
+            solution=solution,
+            industry=industry,
+            target_audience=target_audience
         )
         
         report_id = f"rep-{int(time.time() * 1000)}"
@@ -41,6 +49,10 @@ class ValidationService:
             "problem_statement": problem_statement,
             "customer_segment": customer_segment,
             "geography": geography,
+            "startup_name": startup_name,
+            "solution": solution,
+            "industry": industry,
+            "target_audience": target_audience,
             "date": date_str,
             "scores": report_data.get("scores", {
                 "overall": 80, "demand": 80, "competition": 60, "scalability": 90, "revenuePotential": 75
@@ -52,6 +64,7 @@ class ValidationService:
             "customer_persona": report_data.get("customerPersona", report_data.get("customer_persona", {
                 "name": "Alex", "painPoints": "Slow deployments", "behavior": "Tech worker"
             })),
+            "full_analysis": report_data.get("fullAnalysis", report_data.get("full_analysis", {})),
             "created_at": time.time()
         }
         

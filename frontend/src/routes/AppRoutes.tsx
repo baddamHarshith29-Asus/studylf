@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import Sidebar from '../components/layout/Sidebar';
+import TopNavbar from '../components/layout/TopNavbar';
 
 // Lazy-loaded pages
 const Dashboard   = lazy(() => import('../pages/Dashboard'));
@@ -22,10 +22,21 @@ const MentorDirectory   = lazy(() => import('../pages/MentorDirectory'));
 const PitchDeckReview   = lazy(() => import('../pages/PitchDeckReview'));
 const ResourcesLibrary  = lazy(() => import('../pages/ResourcesLibrary'));
 const ProfileSettings   = lazy(() => import('../pages/ProfileSettings'));
+const IdeaAnalysis      = lazy(() => import('../pages/IdeaAnalysis'));
+const BuildAdvisor      = lazy(() => import('../pages/BuildAdvisor'));
+
+// Public Rava-style pages
+const Landing           = lazy(() => import('../pages/Landing'));
+const About             = lazy(() => import('../pages/About'));
+const Blog              = lazy(() => import('../pages/Blog'));
+const Pricing           = lazy(() => import('../pages/Pricing'));
 
 const LoginPage = lazy(() => import('../pages/auth/Login'));
 const RegisterPage = lazy(() => import('../pages/auth/Register'));
 const VerifyEmailPage = lazy(() => import('../pages/auth/VerifyEmail'));
+
+// Intermediate dashboard hub
+const WorkspaceHub      = lazy(() => import('../pages/WorkspaceHub'));
 
 const PageLoader: React.FC = () => (
   <div className="onboard-container" style={{ flexDirection: 'column', gap: '1.5rem' }}>
@@ -33,7 +44,7 @@ const PageLoader: React.FC = () => (
       width: '56px', height: '56px', borderRadius: '14px',
       background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
-      boxShadow: '0 8px 24px rgba(99, 102, 241, 0.3)', animation: 'glowPulse 2s infinite'
+      boxShadow: '0 8px 24px rgba(239, 43, 112, 0.3)', animation: 'glowPulse 2s infinite'
     }}>
       <span style={{ color: '#fff', fontWeight: 'bold', fontSize: '1.5rem', fontFamily: 'var(--font-heading)' }}>S</span>
     </div>
@@ -46,13 +57,11 @@ const PageLoader: React.FC = () => (
   </div>
 );
 
-// Authenticated layout wrapping Sidebar + page content
+// Authenticated layout wrapping TopNavbar + page content
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { validationReports, roadmapTasks } = useAuth();
-
   return (
-    <div className="app-container">
-      <Sidebar validationReports={validationReports} roadmapTasks={roadmapTasks} />
+    <div className="app-container" style={{ flexDirection: 'column' }}>
+      <TopNavbar />
       <main className="main-content">
         {children}
       </main>
@@ -65,21 +74,26 @@ const AppRoutes: React.FC = () => {
 
   if (loading) return <PageLoader />;
 
-  // Not logged in -> Redirect to login / register / verify-email
+  // Case 1: Not logged in -> Access to Public Pages + Auth Pages
   if (!profile.email) {
     return (
       <Suspense fallback={<PageLoader />}>
         <Routes>
+          <Route path="/"         element={<Landing />} />
+          <Route path="/about"    element={<About />} />
+          <Route path="/blog"     element={<Blog />} />
+          <Route path="/pricing"  element={<Pricing />} />
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="*"         element={<Navigate to="/login" replace />} />
+          <Route path="/startup/:slug" element={<PublicStartupPage />} />
+          <Route path="*"         element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     );
   }
 
-  // Logged in but not onboarded -> Redirect to onboarding
+  // Case 2: Logged in but not onboarded -> Redirect to onboarding
   if (!profile.registered) {
     return (
       <Suspense fallback={<PageLoader />}>
@@ -91,12 +105,33 @@ const AppRoutes: React.FC = () => {
     );
   }
 
+  // Case 3: Logged in & onboarded -> Access to private workspace + public pages
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
         <Route path="/" element={
           <AppLayout>
+            <WorkspaceHub />
+          </AppLayout>
+        } />
+        <Route path="/dashboard" element={
+          <AppLayout>
             <Dashboard />
+          </AppLayout>
+        } />
+        <Route path="/about" element={
+          <AppLayout>
+            <About />
+          </AppLayout>
+        } />
+        <Route path="/blog" element={
+          <AppLayout>
+            <Blog />
+          </AppLayout>
+        } />
+        <Route path="/pricing" element={
+          <AppLayout>
+            <Pricing />
           </AppLayout>
         } />
         <Route path="/roadmap" element={
@@ -164,6 +199,16 @@ const AppRoutes: React.FC = () => {
         <Route path="/settings" element={
           <AppLayout>
             <ProfileSettings />
+          </AppLayout>
+        } />
+        <Route path="/idea-analysis" element={
+          <AppLayout>
+            <IdeaAnalysis />
+          </AppLayout>
+        } />
+        <Route path="/build-advisor" element={
+          <AppLayout>
+            <BuildAdvisor />
           </AppLayout>
         } />
         

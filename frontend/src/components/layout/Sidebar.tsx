@@ -17,7 +17,8 @@ import {
   ChevronRight,
   DollarSign,
   BookOpen,
-  Network
+  Network,
+  Cpu
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -48,6 +49,8 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
       title: "Workspace",
       items: [
         { id: 'dashboard', path: '/', label: 'Dashboard', icon: LayoutDashboard, badge: null },
+        { id: 'idea-analysis', path: '/idea-analysis', label: 'Idea Analyzer', icon: Cpu, badge: null, glow: true },
+        { id: 'build-advisor', path: '/build-advisor', label: 'Build Advisor', icon: Briefcase, badge: null, glow: true },
         { id: 'roadmap', path: '/roadmap', label: 'Roadmap GPS', icon: Map, badge: totalTasks > 0 ? `${completedTasks}/${totalTasks}` : null },
         { id: 'startup-profile', path: '/startup-profile', label: 'Startup Profile', icon: Sliders, badge: null },
         { id: 'directory', path: '/directory', label: 'Startup Directory', icon: Globe, badge: null }
@@ -98,7 +101,7 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
           alignItems: 'center', 
           gap: '0.75rem', 
           padding: '0.5rem 0.5rem 1.25rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+          borderBottom: '1px solid var(--border-light)',
           marginBottom: '1.25rem'
         }}>
           <div style={{
@@ -109,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(99, 102, 241, 0.4)',
+            boxShadow: '0 0 12px rgba(239, 43, 112, 0.25)',
             position: 'relative'
           }}>
             <Zap size={15} fill="#fff" color="#fff" />
@@ -117,16 +120,16 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
               position: 'absolute',
               inset: '-1px',
               borderRadius: '9px',
-              border: '1px solid rgba(6, 182, 212, 0.3)',
+              border: '1px solid rgba(239, 43, 112, 0.15)',
               animation: 'glowPulse 2.5s infinite',
               pointerEvents: 'none'
             }} />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fff', letterSpacing: '0.5px', fontFamily: 'var(--font-heading)' }}>
+            <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.5px', fontFamily: 'var(--font-heading)' }}>
               STUDLYF HUB
             </span>
-            <span style={{ fontSize: '0.62rem', color: 'var(--secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <span style={{ fontSize: '0.62rem', color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>
               Workspace v1.0
             </span>
           </div>
@@ -135,8 +138,8 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
         {/* Health Progress Widget - Sleek Redesign without text headers */}
         {profile.registered && (
           <div className="health-widget fade-in" style={{
-            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%)',
-            border: '1px solid rgba(99, 102, 241, 0.1)',
+            background: 'linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary-glow) 100%)',
+            border: '1px solid var(--border-light)',
             padding: '0.85rem',
             borderRadius: 'var(--radius-md)',
             marginBottom: '1.5rem',
@@ -149,13 +152,13 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
               <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Activity size={12} style={{ color: healthColor }} />
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>HEALTH</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.5px' }}>HEALTH</span>
                 </div>
                 <span style={{ fontSize: '0.75rem', color: healthColor, fontWeight: 700 }}>
                   {healthScore}%
                 </span>
               </div>
-              <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '9999px', overflow: 'hidden' }}>
+              <div style={{ height: '4px', background: 'rgba(0, 0, 0, 0.05)', borderRadius: '9999px', overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${healthScore}%`, background: healthColor, borderRadius: '9999px' }} />
               </div>
             </div>
@@ -165,13 +168,13 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
               <div className="flex-between" style={{ marginBottom: '0.25rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Map size={12} style={{ color: 'var(--primary)' }} />
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.5px' }}>ROADMAP</span>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 600, letterSpacing: '0.5px' }}>ROADMAP</span>
                 </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--secondary)', fontWeight: 700 }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 700 }}>
                   {completionPct}%
                 </span>
               </div>
-              <div style={{ height: '4px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '9999px', overflow: 'hidden' }}>
+              <div style={{ height: '4px', background: 'rgba(0, 0, 0, 0.05)', borderRadius: '9999px', overflow: 'hidden' }}>
                 <div style={{ height: '100%', width: `${completionPct}%`, background: 'linear-gradient(90deg, var(--primary), var(--secondary))', borderRadius: '9999px' }} />
               </div>
             </div>
@@ -188,11 +191,11 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
                   width: '6px',
                   height: '6px',
                   borderRadius: '50%',
-                  backgroundColor: gIdx === 0 ? 'var(--primary)' : gIdx === 1 ? 'var(--secondary)' : 'var(--accent-purple)',
-                  boxShadow: `0 0 6px ${gIdx === 0 ? 'var(--primary)' : gIdx === 1 ? 'var(--secondary)' : 'var(--accent-purple)'}`,
+                  backgroundColor: gIdx === 0 ? 'var(--primary)' : gIdx === 1 ? 'var(--secondary)' : 'var(--border-glow)',
+                  boxShadow: `0 0 6px ${gIdx === 0 ? 'var(--primary)' : gIdx === 1 ? 'var(--secondary)' : 'var(--border-glow)'}`,
                   flexShrink: 0
                 }} />
-                <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
+                <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg, var(--border-light), transparent)' }} />
               </div>
               
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -220,9 +223,9 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
                             fontWeight: 700,
                             padding: '0.1rem 0.4rem',
                             borderRadius: '4px',
-                            background: isActive ? 'rgba(255,255,255,0.2)' : 'var(--primary-glow)',
+                            background: isActive ? 'rgba(255,255,255,0.25)' : 'var(--primary-glow)',
                             color: isActive ? '#fff' : 'var(--primary)',
-                            border: isActive ? 'none' : '1px solid rgba(99, 102, 241, 0.2)',
+                            border: isActive ? 'none' : '1px solid rgba(239, 43, 112, 0.15)',
                           }}>{item.badge}</span>
                         )}
                         {item.glow && !isActive && (
@@ -247,13 +250,13 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
 
         {/* User Profile Footer */}
         {profile.registered && (
-          <div className="sidebar-footer" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '1rem', marginTop: '1.25rem' }}>
+          <div className="sidebar-footer" style={{ borderTop: '1px solid var(--border-light)', paddingTop: '1rem', marginTop: '1.25rem' }}>
             <div style={{ display: 'flex', gap: '0.35rem', marginBottom: '0.75rem' }}>
               <button 
                 onClick={() => navigate('/settings')}
                 className="sidebar-link"
                 style={{ 
-                  flex: 1, background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.03)', textAlign: 'center',
+                  flex: 1, background: 'none', border: '1px solid var(--border-light)', textAlign: 'center',
                   fontSize: '0.78rem',
                   padding: '0.45rem',
                   color: 'var(--text-secondary)',
@@ -270,7 +273,7 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
                 onClick={() => setShowLogoutConfirm(true)}
                 className="sidebar-link"
                 style={{ 
-                  flex: 1, background: 'rgba(239, 68, 68, 0.03)', border: '1px solid rgba(239, 68, 68, 0.1)', textAlign: 'center',
+                  flex: 1, background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.15)', textAlign: 'center',
                   fontSize: '0.78rem',
                   padding: '0.45rem',
                   color: 'var(--danger)',
@@ -290,8 +293,8 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
               gap: '0.5rem',
               padding: '0.5rem 0.65rem', 
               borderRadius: 'var(--radius-sm)',
-              background: 'rgba(255,255,255,0.015)',
-              border: '1px solid rgba(255,255,255,0.03)'
+              background: 'rgba(0, 0, 0, 0.01)',
+              border: '1px solid var(--border-light)'
             }}>
               <div style={{
                 width: '30px',
@@ -309,8 +312,8 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
                 {profile.name ? profile.name.charAt(0).toUpperCase() : 'F'}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-                <span style={{ fontSize: '0.78rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#fff' }}>{profile.name}</span>
-                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.startupName}</span>
+                <span style={{ fontSize: '0.78rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'var(--text-primary)' }}>{profile.name}</span>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.startupName}</span>
               </div>
             </div>
           </div>
@@ -343,7 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({ validationReports, roadmapTasks }) =>
               <LogOut size={20} />
             </div>
 
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#fff' }}>Sign Out</h3>
+            <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Sign Out</h3>
             <p style={{ fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
               Are you sure you want to end your active workspace session?
             </p>

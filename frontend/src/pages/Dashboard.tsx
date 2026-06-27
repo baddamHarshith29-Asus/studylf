@@ -256,7 +256,7 @@ export default function Dashboard() {
     { label: 'Startup Creation', path: '/startup-profile', isCompleted: profile.registered },
     { label: 'AI Validation', path: '/', isCompleted: validationReports.length > 0 || dashboardData.validationScore > 0, action: () => setShowValModal(true) },
     { label: 'Founder GPS', path: '/roadmap', isCompleted: dashboardData.roadmapProgress > 0 },
-    { label: 'AI Build Advisor', path: '/', isCompleted: profile.stage !== 'Idea', action: () => setShowBuildModal(true) },
+    { label: 'AI Build Advisor', path: '/build-advisor', isCompleted: profile.stage !== 'Idea' },
     { label: 'Resources Library', path: '/playbooks', isCompleted: true },
     { label: 'Mentor Discovery', path: '/mentors', isCompleted: dashboardData.recommendedMentors.length > 0 },
     { label: 'Smart Network Recommender', path: '/network', isCompleted: false },
@@ -288,7 +288,7 @@ export default function Dashboard() {
           <button onClick={() => setShowValModal(true)} className="btn btn-primary">
             <Plus size={16} /> Validate Idea
           </button>
-          <button onClick={() => setShowBuildModal(true)} className="btn btn-secondary">
+          <button onClick={() => navigate('/build-advisor')} className="btn btn-secondary">
             <Layers size={16} /> Build Advisor
           </button>
         </div>

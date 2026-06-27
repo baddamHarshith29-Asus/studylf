@@ -56,6 +56,10 @@ class ValidationReport(MongoObject):
     def customerPersona(self) -> Dict[str, Any]:
         return self._doc.get("customer_persona") or self._doc.get("customerPersona") or {}
 
+    @property
+    def fullAnalysis(self) -> Optional[Dict[str, Any]]:
+        return self._doc.get("full_analysis") or self._doc.get("fullAnalysis")
+
 class RoadmapTask(MongoObject):
     pass
 

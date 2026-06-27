@@ -52,7 +52,11 @@ class RAGPipeline:
         startup_idea: str, 
         problem_statement: Optional[str] = None, 
         customer_segment: Optional[str] = None, 
-        geography: Optional[str] = None
+        geography: Optional[str] = None,
+        startup_name: Optional[str] = None,
+        solution: Optional[str] = None,
+        industry: Optional[str] = None,
+        target_audience: Optional[str] = None
     ) -> Dict[str, Any]:
         """Orchestrates Tavily Search + ValidationChain LLM query to validate a concept."""
         search_query = f"{startup_idea} market size competition"
@@ -68,5 +72,9 @@ class RAGPipeline:
             problem_statement=problem_statement,
             customer_segment=customer_segment,
             geography=geography,
-            search_context=search_context
+            search_context=search_context,
+            startup_name=startup_name,
+            solution=solution,
+            industry=industry,
+            target_audience=target_audience
         )

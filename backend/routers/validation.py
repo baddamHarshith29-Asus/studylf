@@ -26,7 +26,11 @@ async def run_validation(data: ValidateRequest, db = Depends(get_db), current_us
         startup_idea=data.startupIdea,
         problem_statement=data.problemStatement,
         customer_segment=data.customerSegment,
-        geography=data.geography
+        geography=data.geography,
+        startup_name=data.startupName,
+        solution=data.solution,
+        industry=data.industry,
+        target_audience=data.targetAudience
     )
     return {
         "success": True,
