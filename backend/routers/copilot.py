@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Dict, Any, Optional
 import time
 from backend.core.database import get_db
-from backend.routers.auth import get_current_user_optional
+from backend.routers.auth import get_current_user_optional, get_current_user
 from backend.models.models import User, Resource, FundingScheme, Investor, ChatHistory
 from backend.schemas.schemas import ChatRequest, ChatResponse, PitchEvaluationRequest, PitchEvaluationResponse, ResourceResponse, ChatMessage
 from backend.services.ai_service import AIService
@@ -18,20 +18,48 @@ class ResourceCreate(BaseModel):
     desc: str
     fileType: str
     size: str
+    type: Optional[str] = "document"
+    url: Optional[str] = None
+    videoUrl: Optional[str] = None
+    duration: Optional[str] = None
+    author: Optional[str] = None
+    readTime: Optional[str] = None
+    content: Optional[str] = None
+    chapters: Optional[List[Dict[str, str]]] = None
+    transcript: Optional[str] = None
 
 @router.get("/resources", response_model=List[ResourceResponse])
-def get_resources(db = Depends(get_db)):
+def get_resources(db = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
     resources = list(db.resources.find({}))
+    
+    # Get user bookmarks
+    bookmarked_ids = set()
+    if current_user:
+        bookmarks = list(db.user_bookmarks.find({"user_id": current_user.id}))
+        bookmarked_ids = {b["resource_id"] for b in bookmarks}
+        
     result = []
     for r in resources:
+        res_id = r.get("id") or str(r["_id"])
         result.append({
-            "id": r.get("id") or str(r["_id"]),
+            "id": res_id,
             "title": r.get("title"),
             "category": r.get("category"),
             "desc": r.get("desc"),
-            "fileType": r.get("file_type"),
-            "size": r.get("size"),
-            "downloads": r.get("downloads", 0)
+            "fileType": r.get("file_type") or r.get("fileType") or "PDF",
+            "size": r.get("size") or "1.0 MB",
+            "downloads": r.get("downloads", 0),
+            "type": r.get("type") or "document",
+            "url": r.get("url"),
+            "videoUrl": r.get("video_url") or r.get("videoUrl"),
+            "duration": r.get("duration"),
+            "author": r.get("author") or "Studlyf Team",
+            "readTime": r.get("read_time") or r.get("readTime"),
+            "content": r.get("content"),
+            "chapters": r.get("chapters"),
+            "transcript": r.get("transcript"),
+            "views": r.get("views", 0),
+            "bookmarked": res_id in bookmarked_ids
         })
     return result
 
@@ -45,7 +73,17 @@ def create_resource(data: ResourceCreate, db = Depends(get_db)):
         "desc": data.desc,
         "file_type": data.fileType,
         "size": data.size,
-        "downloads": 0
+        "downloads": 0,
+        "views": 0,
+        "type": data.type or "document",
+        "url": data.url,
+        "video_url": data.videoUrl,
+        "duration": data.duration,
+        "author": data.author or "Studlyf Contributor",
+        "read_time": data.readTime,
+        "content": data.content,
+        "chapters": data.chapters or [],
+        "transcript": data.transcript
     }
     db.resources.insert_one(new_res)
     return {
@@ -55,8 +93,38 @@ def create_resource(data: ResourceCreate, db = Depends(get_db)):
         "desc": data.desc,
         "fileType": data.fileType,
         "size": data.size,
-        "downloads": 0
+        "downloads": 0,
+        "views": 0,
+        "type": data.type or "document",
+        "url": data.url,
+        "videoUrl": data.videoUrl,
+        "duration": data.duration,
+        "author": data.author or "Studlyf Contributor",
+        "readTime": data.readTime,
+        "content": data.content,
+        "chapters": data.chapters or [],
+        "transcript": data.transcript,
+        "bookmarked": False
     }
+
+@router.post("/resources/{resource_id}/bookmark")
+def toggle_bookmark(resource_id: str, db = Depends(get_db), current_user: User = Depends(get_current_user)):
+    existing = db.user_bookmarks.find_one({"user_id": current_user.id, "resource_id": resource_id})
+    if existing:
+        db.user_bookmarks.delete_one({"_id": existing["_id"]})
+        return {"bookmarked": False}
+    else:
+        db.user_bookmarks.insert_one({
+            "user_id": current_user.id,
+            "resource_id": resource_id,
+            "created_at": time.time()
+        })
+        return {"bookmarked": True}
+
+@router.post("/resources/{resource_id}/view")
+def increment_view(resource_id: str, db = Depends(get_db)):
+    db.resources.update_one({"id": resource_id}, {"$inc": {"views": 1}})
+    return {"success": True}
 
 @router.post("/copilot/chat", response_model=ChatResponse)
 async def chat_copilot_endpoint(data: ChatRequest, db = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):

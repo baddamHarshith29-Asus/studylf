@@ -42,7 +42,7 @@ export default function Funding() {
   const [loading, setLoading] = useState(true);
 
   // Sub-tabs State
-  const [activeSubTab, setActiveSubTab] = useState<'navigator' | 'dilution' | 'calendar'>('navigator');
+  const [activeSubTab, setActiveSubTab] = useState<'navigator' | 'pipeline' | 'dilution' | 'calendar'>('navigator');
 
   // Reminders state
   const [reminders, setReminders] = useState<string[]>(() => {
@@ -227,6 +227,12 @@ export default function Funding() {
           Funding Navigator & Radar
         </button>
         <button 
+          onClick={() => setActiveSubTab('pipeline')} 
+          className={`tab-btn ${activeSubTab === 'pipeline' ? 'active' : ''}`}
+        >
+          Fundraising Pipeline Board
+        </button>
+        <button 
           onClick={() => setActiveSubTab('dilution')} 
           className={`tab-btn ${activeSubTab === 'dilution' ? 'active' : ''}`}
         >
@@ -239,6 +245,118 @@ export default function Funding() {
           Grant Deadline Calendar
         </button>
       </div>
+
+      {activeSubTab === 'pipeline' && (
+        <div className="slide-up glass-card" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <h3>📋 Fundraising Pipeline Kanban Board</h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Emulating the OpenVC board. Move your active applications through stages to track your fundraising progress.</p>
+          
+          {applications.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', padding: '2rem', textAlign: 'center' }}>No active applications tracked yet. Click "Apply / Track" on matching schemes under the Navigator tab.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+              {['Applied', 'Under Review', 'Accepted', 'Rejected'].map(status => {
+                const colApps = applications.filter(app => app.status === status);
+                return (
+                  <div 
+                    key={status} 
+                    className="glass-card" 
+                    style={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: '1rem', 
+                      minWidth: '240px', 
+                      background: 'rgba(255,255,255,0.01)', 
+                      border: '1px solid var(--border-light)', 
+                      minHeight: '450px',
+                      padding: '1rem'
+                    }}
+                  >
+                    <h4 style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between', 
+                      fontSize: '0.85rem', 
+                      fontWeight: 700, 
+                      borderBottom: '1px solid rgba(255,255,255,0.05)', 
+                      paddingBottom: '0.5rem', 
+                      textTransform: 'uppercase',
+                      color: status === 'Accepted' ? 'var(--success)' : status === 'Rejected' ? 'var(--danger)' : '#fff'
+                    }}>
+                      <span>{status}</span>
+                      <span className="badge badge-secondary" style={{ fontSize: '0.68rem', padding: '0.1rem 0.35rem' }}>{colApps.length}</span>
+                    </h4>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
+                      {colApps.map(app => (
+                        <div 
+                          key={app.id} 
+                          className="glass-card" 
+                          style={{ 
+                            padding: '0.85rem', 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            gap: '0.5rem', 
+                            background: 'rgba(255,255,255,0.02)', 
+                            border: '1px solid var(--border-light)',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                          }}
+                        >
+                          <h5 style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff', margin: 0 }}>{app.scheme?.name || 'Unknown Program'}</h5>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{app.scheme?.provider}</span>
+                          
+                          <div className="flex-between" style={{ fontSize: '0.72rem', marginTop: '0.25rem' }}>
+                            <span style={{ color: 'var(--secondary)', fontWeight: 600 }}>{app.scheme?.amount}</span>
+                            <span style={{ color: 'var(--text-muted)' }}>{app.appliedDate}</span>
+                          </div>
+                          
+                          {app.notes && (
+                            <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.01)', padding: '0.4rem', borderRadius: '4px', margin: 0, border: '1px solid rgba(255,255,255,0.02)' }}>
+                              📝 {app.notes}
+                            </p>
+                          )}
+                          
+                          <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.5rem', justifyContent: 'flex-end' }}>
+                            {status !== 'Applied' && (
+                              <button 
+                                onClick={() => handleUpdateStatus(app.id, status === 'Under Review' ? 'Applied' : status === 'Accepted' ? 'Under Review' : 'Accepted')} 
+                                className="btn btn-secondary" 
+                                style={{ padding: '0.2rem 0.4rem', fontSize: '0.65rem', minWidth: '24px' }}
+                                title="Move Back"
+                              >
+                                ◀
+                              </button>
+                            )}
+                            {status !== 'Rejected' && (
+                              <button 
+                                onClick={() => handleUpdateStatus(app.id, status === 'Applied' ? 'Under Review' : status === 'Under Review' ? 'Accepted' : 'Rejected')} 
+                                className="btn btn-secondary" 
+                                style={{ padding: '0.2rem 0.4rem', fontSize: '0.65rem', minWidth: '24px' }}
+                                title="Move Forward"
+                              >
+                                ▶
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => handleUpdateStatus(app.id, 'Rejected')} 
+                              className="btn btn-outline" 
+                              style={{ padding: '0.2rem 0.4rem', fontSize: '0.65rem', color: 'var(--danger)', borderColor: 'rgba(239,68,68,0.2)', minWidth: '24px' }}
+                              title="Reject Application"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {activeSubTab === 'navigator' && (
         <div className="slide-up" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem' }}>

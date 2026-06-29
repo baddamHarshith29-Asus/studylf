@@ -616,24 +616,24 @@ export default function Network() {
             ) : pathResult ? (
               <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', height: '100%' }}>
                 
-                <div className="network-path">
-                  <div className="path-node">
-                    <div className="node-icon-wrapper" style={{ fontSize: '0.72rem' }}>You</div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{pathResult.path[0]?.name}</span>
+                <div className="network-path" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 0.5rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
+                  <div className="path-node" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', flex: 1, minWidth: 0 }}>
+                    <div className="node-icon-wrapper" style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(99,102,241,0.1)', border: '2px solid var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 'bold', color: 'var(--primary)' }}>You</div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '90px' }}>{pathResult.path[0]?.name}</span>
                   </div>
                   
-                  <div className="path-arrow" />
+                  <div className="path-arrow" style={{ fontSize: '1.2rem', color: 'var(--text-muted)', userSelect: 'none' }}>➔</div>
 
-                  <div className="path-node">
-                    <div className="node-icon-wrapper" style={{ fontSize: '0.72rem', borderColor: 'var(--accent-purple)', color: 'var(--accent-purple)' }}>Contact</div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{pathResult.path[1]?.name}</span>
+                  <div className="path-node" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', flex: 1, minWidth: 0 }}>
+                    <div className="node-icon-wrapper" style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(139,92,246,0.1)', border: '2px solid var(--accent-purple)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 'bold', color: 'var(--accent-purple)' }}>Contact</div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '90px' }}>{pathResult.path[1]?.name}</span>
                   </div>
 
-                  <div className="path-arrow" />
+                  <div className="path-arrow" style={{ fontSize: '1.2rem', color: 'var(--text-muted)', userSelect: 'none' }}>➔</div>
 
-                  <div className="path-node target">
-                    <div className="node-icon-wrapper" style={{ fontSize: '0.72rem' }}>Target</div>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{pathResult.path[2]?.name}</span>
+                  <div className="path-node target" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', flex: 1, minWidth: 0 }}>
+                    <div className="node-icon-wrapper" style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'rgba(16,185,129,0.1)', border: '2px solid var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 'bold', color: 'var(--success)' }}>Target</div>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '90px' }}>{pathResult.path[2]?.name}</span>
                   </div>
                 </div>
 

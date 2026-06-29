@@ -99,9 +99,13 @@ def seed_initial_data():
             db.mentors.insert_many(DEFAULT_MENTORS)
             
         # 4. Seed Resources
-        if db.resources.count_documents({}) == 0:
-            logger.info("Seeding default library resources...")
-            db.resources.insert_many(DEFAULT_RESOURCES)
+        logger.info("Verifying and seeding default library resources...")
+        for resource in DEFAULT_RESOURCES:
+            db.resources.update_one(
+                {"id": resource["id"]},
+                {"$set": resource},
+                upsert=True
+            )
             
         # 5. Seed Radar Items
         if db.radar_items.count_documents({}) == 0:

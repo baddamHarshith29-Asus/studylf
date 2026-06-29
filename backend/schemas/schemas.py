@@ -287,6 +287,17 @@ class ResourceResponse(BaseModel):
     fileType: str
     size: str
     downloads: int
+    type: Optional[str] = "document"
+    url: Optional[str] = None
+    videoUrl: Optional[str] = None
+    duration: Optional[str] = None
+    author: Optional[str] = None
+    readTime: Optional[str] = None
+    content: Optional[str] = None
+    chapters: Optional[List[Dict[str, str]]] = None
+    transcript: Optional[str] = None
+    views: Optional[int] = 0
+    bookmarked: Optional[bool] = False
 
     class Config:
         from_attributes = True

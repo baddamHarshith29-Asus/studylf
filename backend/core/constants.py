@@ -206,7 +206,51 @@ DEFAULT_RESOURCES = [
         'desc': 'Standard SHA template for seed-stage startups, covering founder vesting, board seat representation, and drag-along rights.',
         'file_type': 'DOCX',
         'size': '42 KB',
-        'downloads': 215
+        'downloads': 215,
+        'views': 480,
+        'type': 'document',
+        'author': 'Studlyf Legal Team',
+        'read_time': '15 min',
+        'content': """# Shareholders Agreement (SHA) Guide & Draft Outline
+
+The Shareholders Agreement (SHA) regulates the relationship between cofounders and early institutional investors. It is the primary legal mechanism governing board composition, transfer of shares, voting guidelines, and major decisions.
+
+---
+
+## 1. Key Clauses to Understand
+
+### A. Founders Vesting Schedule
+* Typically a **4-year vesting schedule** with a **1-year cliff**.
+* If a cofounder leaves within the first year, they walk away with **0% equity**. This protects early partners from early splits.
+* Vesting happens monthly after the cliff.
+
+### B. Drag-Along Rights
+* Forces minority shareholders to cooperate if a threshold majority (usually 75%+) votes to sell the startup.
+* Prevents small shareholders from blocking an acquisition.
+
+### C. Pre-Emptive Rights (Pro-Rata Rights)
+* Allows current investors to participate in future rounds to prevent diluting their ownership stake.
+
+### D. Liquidation Preference
+* Guarantees that in an exit or liquidation, investors are paid back their investment (usually 1x non-participating preference) before common equity (founders) receives any proceeds.
+
+---
+
+## 2. Standard Drafting Outline
+
+### Section I: Definitions & Interpretation
+Defines terms like *Capital Stock*, *Liquidation Event*, *Fully Diluted Shares*, and *Qualified IPO*.
+
+### Section II: Board of Directors & Governance
+* **Board Seats**: Founders retain X seats, Seed Investors get Y seats, and Z seats are reserved for an Independent Director.
+* **Consent Matters**: Major decisions (like raising debt, selling the company, changing the business line) require supermajority board consent.
+
+### Section III: Transfer of Shares
+* **Right of First Refusal (ROFR)**: If a founder wishes to sell shares, they must first offer them to the company and other shareholders.
+* **Co-Sale Rights (Tag-Along)**: If a founder sells their shares, other investors can join the sale under same terms.
+
+### Section IV: Dispute Resolution
+Specifies arbitration procedures, jurisdiction, and governing law (e.g., Delhi, India or Delaware, USA)."""
     },
     {
         'id': 'r-2',
@@ -215,7 +259,66 @@ DEFAULT_RESOURCES = [
         'desc': 'Premium Figma & PPT outline for pitching early stage VCs, structured according to Sequoia guidelines.',
         'file_type': 'PDF/PPTX',
         'size': '12 MB',
-        'downloads': 540
+        'downloads': 540,
+        'views': 1200,
+        'type': 'document',
+        'author': 'Sequoia Capital & YC Partners',
+        'read_time': '10 min',
+        'content': """# YC & Sequoia 12-Slide Pitch Deck Framework
+
+A premium VC-ready pitch deck is concise, clean, and numbers-focused. Early-stage venture capitalists spend an average of less than 3 minutes reviewing a seed-stage deck.
+
+---
+
+## 1. Standard Slide Sequence
+
+### Slide 1: Company Purpose
+* Define the company in one simple, declarative sentence.
+* Avoid buzzwords (e.g., "We are the Uber of AI for pets").
+
+### Slide 2: The Problem
+* Identify a major, urgent customer pain point.
+* Explain how customers solve it today (the workarounds) and why they are painful.
+
+### Slide 3: The Solution
+* Explain why your product is 10x better than existing workarounds.
+* Show, don't just tell (use product screenshots or short walkthroughs).
+
+### Slide 4: Why Now?
+* Explain the market or technological shift (e.g., LLM adoption, regulatory changes) that makes this solution possible *now* when it wasn't before.
+
+### Slide 5: Market Size (TAM, SAM, SOM)
+* **TAM (Total Addressable Market)**: The total global demand if you got 100% market share.
+* **SAM (Serviceable Addressable Market)**: The portion of TAM targeted by your product.
+* **SOM (Serviceable Obtainable Market)**: The market you can realistically capture in 3-5 years.
+
+### Slide 6: The Competition
+* A honest matrix detailing direct and indirect competitors.
+* Highlight your core unfair advantages (IP, speed, proprietary data).
+
+### Slide 7: Product & Features
+* Workflow mocks showing simplicity and user adoption.
+* Focus on the 1-2 features users love most.
+
+### Slide 8: Business Model
+* Detail subscription tiers, transaction fees, or enterprise pricing models.
+* Outline customer acquisition costs (CAC) and customer lifetime value (LTV) assumptions.
+
+### Slide 9: Traction & Growth Metrics
+* Show month-over-month revenue growth, active users, or pilot deployments.
+* Present charts showing upward slopes.
+
+### Slide 10: Team
+* List cofounder domain credentials, previous successes, and technical roles.
+* Highlight past companies worked at or universities attended.
+
+### Slide 11: Financial Projections
+* Summarize your 3-year revenue and expense forecast.
+* Show key cost drivers (salaries, hosting, marketing).
+
+### Slide 12: The Ask & Milestones
+* Detail the amount you are raising and how you will spend the capital over the next 18 months.
+* Specify the milestone goals you will achieve with this funding (e.g., reaching $100K MRR)."""
     },
     {
         'id': 'r-3',
@@ -224,7 +327,46 @@ DEFAULT_RESOURCES = [
         'desc': 'Pre-built Excel model with forecasting sheets for SaaS, hiring pipelines, and server costing variables.',
         'file_type': 'XLSX',
         'size': '1.2 MB',
-        'downloads': 382
+        'downloads': 382,
+        'views': 820,
+        'type': 'document',
+        'author': 'Studlyf Finance Team',
+        'read_time': '12 min',
+        'content': """# Startup 3-Year Financial Model Guide
+
+A financial model simulates your startup operations, monthly burn, runway, and growth targets. For seed stage, VCs look at your modeling to understand your hiring plan and operational logic.
+
+---
+
+## 1. Key Modeling Sections
+
+### A. Revenue Forecasting (SaaS/B2B Model)
+* Model active accounts, conversion rates from free trials, and annual/monthly contract value (ACV/TCV).
+* Calculate Annual Recurring Revenue (ARR) and Monthly Recurring Revenue (MRR).
+
+### B. Cost of Goods Sold (COGS)
+* Index hosting and API costs (AWS, GCP, OpenAI tokens).
+* Include payment gateway fees (Stripe, Razorpay) and support overheads.
+
+### C. Headcount & Hiring Plan
+* Detail salary bands, bonuses, payroll taxes, and health benefits.
+* Link hiring triggers to revenue milestones (e.g., hire sales reps after reaching $50K MRR).
+
+### D. Burn Rate & Runway Indicators
+* **Gross Burn**: Total monthly operating expenses.
+* **Net Burn**: Operating expenses minus monthly revenues.
+* **Runway**: Cash in bank divided by Net Burn. Maintain a minimum 18-month buffer.
+
+---
+
+## 2. Common Financial Metrics
+
+| Metric | Formula | Target for Seed Round |
+| :--- | :--- | :--- |
+| **LTV:CAC Ratio** | Lifetime Value / Customer Acquisition Cost | > 3x |
+| **Churn Rate** | Lost Customers / Total Customers (Monthly) | < 2% |
+| **Magic Number** | (Quarterly ARR Increase) / (Previous Quarter S&M Cost) | > 0.75 |
+| **Net Retention** | (Starting ARR + Expansion - Churn) / (Starting ARR) | > 110% |"""
     },
     {
         'id': 'r-4',
@@ -233,7 +375,154 @@ DEFAULT_RESOURCES = [
         'desc': 'Detailed, step-by-step handbook on documents needed and errors to avoid to ensure fast DPIIT approval.',
         'file_type': 'PDF',
         'size': '820 KB',
-        'downloads': 189
+        'downloads': 189,
+        'views': 510,
+        'type': 'document',
+        'author': 'Startup India Portal',
+        'read_time': '8 min',
+        'content': """# DPIIT Recognition Handbook & Checklist
+
+DPIIT recognition is mandatory for Indian startups to qualify for tax exemptions under Section 80-IAC, access matching schemes like the Startup India Seed Fund Scheme (SISFS), and participate in national hackathons.
+
+---
+
+## 1. Eligibility Criteria
+* **Company Type**: Must be incorporated as a Private Limited Company, Registered Partnership, or Limited Liability Partnership (LLP). *Sole proprietorships do not qualify.*
+* **Age of Entity**: Must be under 10 years from the date of incorporation.
+* **Turnover**: Annual turnover must not exceed ₹100 Crores in any financial year since incorporation.
+* **Innovation focus**: Must be working towards innovation, development, or improvement of products, processes, or services, or have a scalable business model with high potential of employment generation.
+
+---
+
+## 2. Document Checklist
+
+1. **Certificate of Incorporation** (Pvt Ltd or LLP deed).
+2. **Write-up on the Innovative Nature of the Startup**:
+   * Maximum 2 pages.
+   * Explain the problem statement, your solution, how it is innovative, and how it can generate jobs or wealth.
+3. **Pitch Deck / Website Link**:
+   * A 10-slide deck summarizing the product.
+   * Product screenshots or an active workspace demo video.
+4. **IPR Details (Optional)**:
+   * Patents filed, registered trademarks, or copyright details.
+
+---
+
+## 3. Common Application Pitfalls
+* **Mismatch in Name**: The startup name in the DPIIT application must match the MCA records exactly.
+* **Vague Innovation Description**: Simply copying existing models (e.g., "We are a food delivery app") without explaining the technological innovation or customization will lead to rejection."""
+    },
+    {
+        'id': 'r-5',
+        'title': 'Garry Tan: How to Pitch VCs and Angel Investors',
+        'category': 'Fundraising',
+        'desc': 'Garry Tan outlines the absolute essentials of pitching: what to say in the first 30 seconds, how to present numbers, and mistakes that kill deals.',
+        'file_type': 'Video',
+        'size': '14 Min',
+        'downloads': 1240,
+        'views': 4520,
+        'type': 'video',
+        'video_url': 'https://www.youtube.com/embed/S2p-y-X-50g',
+        'duration': '14:20',
+        'author': 'Garry Tan',
+        'chapters': [
+            {'title': 'Introduction & Pitching Core Principles', 'timestamp': '0:00'},
+            {'title': 'The First 30 Seconds Rule', 'timestamp': '1:15'},
+            {'title': 'Explaining the Market & Traction', 'timestamp': '4:40'},
+            {'title': 'Angel Investors vs VCs', 'timestamp': '8:20'},
+            {'title': 'Summary & Pitch Deck Formatting Tips', 'timestamp': '12:10'}
+        ],
+        'transcript': """Welcome back to another YC Startup School session. I'm Garry Tan, CEO of Y Combinator.
+
+Today, we're talking about how to pitch VCs and angel investors. Most founders get this wrong because they treat a pitch like a university lecture or a product demo. But a pitch is actually a narrative about how you're going to build a massive business.
+
+In the first 30 seconds, you need to state clearly what your company does, who it's for, and why it's a huge opportunity. If you can't describe your business in one clear, simple sentence, investors will assume you don't understand it yourself.
+
+Next, you need to show momentum. VCs care about lines, not dots. If you've been working on the idea for six months, show us your growth, your pilots, or your active users. Even if the numbers are small, the trajectory is what matters.
+
+Finally, when pitching angels vs VCs, remember that VCs need 100x outcomes to make their fund math work. Angels might invest because they love the sector or want to support you, but VCs are looking for businesses that can achieve massive scale. Keep it simple, focus on your numbers, and practice daily."""
+    },
+    {
+        'id': 'r-6',
+        'title': 'Paul Graham: How to Start a Startup',
+        'category': 'Becoming a Founder',
+        'desc': 'The classic essay by Paul Graham detailing the three main ingredients needed to start a successful startup: good people, making something users want, and spending as little money as possible.',
+        'file_type': 'Essay',
+        'size': '15 KB',
+        'downloads': 3400,
+        'views': 9500,
+        'type': 'document',
+        'author': 'Paul Graham',
+        'read_time': '18 min',
+        'content': """# How to Start a Startup
+
+*March 2005 (This essay is derived from a talk at the Harvard Computer Society)*
+
+---
+
+## 1. The Three Ingredients
+To start a successful startup, you need three things:
+1. To start with good people.
+2. To make something customers actually want.
+3. To spend as little money as possible.
+
+Most startups that fail do so because they fail at one of these three. A startup that does all three will probably succeed. And that's actually quite encouraging, because all three are doable. You don't have to be a genius to do them.
+
+---
+
+## 2. Good People
+What makes a cofounder? A cofounder is someone who shares your vision but brings complementary skills. If you are a developer, find a salesperson or an operations lead. If you are business-focused, you absolutely need a technical cofounder. 
+
+Do not try to build a tech startup without a technical cofounder. Paying an agency to build your MVP is almost always a death sentence.
+
+---
+
+## 3. Make Something People Want
+How do you know what people want? The best way is to look at your own problems. What is something you wish existed that doesn't? 
+
+If you are not the target user, you must spend hours talking to them. Go where they hang out. Listen to their complaints. Ask them what workarounds they use.
+
+---
+
+## 4. Spend as Little Money as Possible
+The number one cause of death for startups is running out of money. In the early stages, you must keep your expenses extremely low. This is what we call **"ramen profitable"**—making enough money to pay for the founders' basic living expenses.
+
+If you don't raise money, you are forced to be disciplined. If you do raise money, treat it as if it's your last. Don't rent a fancy office or hire full-time employees until you have clear product-market fit."""
+    },
+    {
+        'id': 'r-7',
+        'title': 'Michael Seibel: How to Build an MVP',
+        'category': 'Product & MVP',
+        'desc': 'Michael Seibel, Co-founder of Twitch and YC Partner, breaks down how to build an MVP: launching quickly, focusing on the core feature, and talking to users.',
+        'file_type': 'Video',
+        'size': '12 Min',
+        'downloads': 1890,
+        'views': 6120,
+        'type': 'video',
+        'video_url': 'https://www.youtube.com/embed/ZRJD5N-WlhM',
+        'duration': '11:45',
+        'author': 'Michael Seibel',
+        'chapters': [
+            {'title': 'Why you need an MVP', 'timestamp': '0:00'},
+            {'title': 'Launch Fast & Iterate', 'timestamp': '2:30'},
+            {'title': 'Focusing on Core Features', 'timestamp': '6:15'},
+            {'title': 'Getting User Feedback', 'timestamp': '9:00'}
+        ],
+        'transcript': """Hey guys, Michael Seibel here. Today we are talking about building an MVP.
+
+An MVP stands for Minimum Viable Product. The key word here is *minimum*. 
+
+Most founders build way too much before launching. They think their product needs to be perfect, with fifty different features, before anyone will use it. But in reality, your product will never be perfect on day one.
+
+The goal of an MVP is to get a basic version of your product into the hands of users as fast as possible. Why? Because you want to start learning. You want to see if they actually use it, what they complain about, and what features they request.
+
+Here's my advice for building a great MVP:
+1. Build it in less than 4 weeks. If it takes longer, you are building too much.
+2. Focus on one single problem for one single customer.
+3. Write down a list of all the features you want to build, and throw away 90% of them. Keep only the absolute core feature.
+4. Launch it and talk to your users. They will tell you what to build next.
+
+Stop refining, start launching. Let's get to work."""
     }
 ]
 

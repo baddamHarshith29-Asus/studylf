@@ -18,10 +18,18 @@ export default function MentorDirectory() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   
-  // Booking session modal
   const [bookingMentor, setBookingMentor] = useState<Mentor | null>(null);
-  const [bookingDate, setBookingDate] = useState('');
-  const [bookingTime, setBookingTime] = useState('');
+  const [selectedDateIndex, setSelectedDateIndex] = useState(0);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('10:00 AM');
+  const [discussionTopic, setDiscussionTopic] = useState('General Advisory');
+
+  const MOCK_DATES = [
+    { label: 'Jul 1 (Wed)', val: '2026-07-01' },
+    { label: 'Jul 3 (Fri)', val: '2026-07-03' },
+    { label: 'Jul 6 (Mon)', val: '2026-07-06' }
+  ];
+
+  const MOCK_SLOTS = ['10:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'];
 
   useEffect(() => {
     fetchMentors();
@@ -45,10 +53,12 @@ export default function MentorDirectory() {
   const handleBookMeeting = (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookingMentor) return;
-    showToast(`Meeting requested with ${bookingMentor.name} for ${bookingDate} at ${bookingTime}. They will confirm availability shortly.`, 'success');
+    const dateVal = MOCK_DATES[selectedDateIndex]?.val || '2026-07-01';
+    showToast(`Session request submitted to ${bookingMentor.name} for ${dateVal} at ${selectedTimeSlot} (Topic: ${discussionTopic}). They will confirm shortly!`, 'success');
     setBookingMentor(null);
-    setBookingDate('');
-    setBookingTime('');
+    setSelectedDateIndex(0);
+    setSelectedTimeSlot('10:00 AM');
+    setDiscussionTopic('General Advisory');
   };
 
   const filteredMentors = mentors.filter((m) => {
@@ -134,44 +144,70 @@ export default function MentorDirectory() {
 
       {/* Booking Modal */}
       {bookingMentor && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, backdropFilter: 'blur(8px)' }}>
-          <div className="glass-card slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--bg-popover)', padding: '2rem' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, backdropFilter: 'blur(8px)', padding: '1rem' }}>
+          <div className="glass-card slide-up" style={{ width: '100%', maxWidth: '420px', background: 'var(--bg-popover)', padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto', margin: 'auto' }}>
             <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
-              <h3>Book Advisor Session</h3>
-              <button onClick={() => setBookingMentor(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                <X size={18} />
-              </button>
+              <h3 style={{ fontSize: '1.1rem', margin: 0 }}>📅 Book Advisor office hours</h3>
+              <button onClick={() => setBookingMentor(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
             </div>
             
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-              Schedule a 30-minute matching slot with <strong>{bookingMentor.name}</strong>.
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+              Select a 30-minute office-hours slot with <strong>{bookingMentor.name}</strong> from their published availability.
             </p>
 
-            <form onSubmit={handleBookMeeting} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={handleBookMeeting} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div className="form-group">
-                <label className="form-label">Select Date</label>
-                <input 
-                  type="date" 
-                  className="form-input" 
-                  value={bookingDate} 
-                  onChange={(e) => setBookingDate(e.target.value)} 
-                  required 
-                />
+                <label className="form-label" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Published Available Dates</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginTop: '0.35rem' }}>
+                  {MOCK_DATES.map((date, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedDateIndex(idx)}
+                      className={`btn ${selectedDateIndex === idx ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '0.5rem 0.25rem', fontSize: '0.75rem', fontWeight: 600 }}
+                    >
+                      {date.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Select Time Slot</label>
-                <input 
-                  type="time" 
-                  className="form-input" 
-                  value={bookingTime} 
-                  onChange={(e) => setBookingTime(e.target.value)} 
-                  required 
-                />
+                <label className="form-label" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Available Time slots</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginTop: '0.35rem' }}>
+                  {MOCK_SLOTS.map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => setSelectedTimeSlot(slot)}
+                      className={`btn ${selectedTimeSlot === slot ? 'btn-accent' : 'btn-secondary'}`}
+                      style={{ padding: '0.5rem 0.25rem', fontSize: '0.75rem', fontWeight: 600 }}
+                    >
+                      {slot}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }}>
-                Submit Booking Request
+              <div className="form-group">
+                <label className="form-label" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Topic of Discussion</label>
+                <select 
+                  className="form-select" 
+                  style={{ width: '100%', padding: '0.45rem', fontSize: '0.8rem', marginTop: '0.35rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-light)' }}
+                  value={discussionTopic}
+                  onChange={(e) => setDiscussionTopic(e.target.value)}
+                >
+                  <option value="General Advisory">General Advisory & Gaps</option>
+                  <option value="Pitch Deck Review">Pitch Deck Review</option>
+                  <option value="GTM / Growth Hacks">GTM & Growth Hacking</option>
+                  <option value="Tech Stack / Arch check">Tech Stack & Architecture</option>
+                  <option value="Fundraising Strategies">Fundraising Strategies</option>
+                </select>
+              </div>
+
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem', padding: '0.65rem' }}>
+                Confirm Office Hours Request
               </button>
             </form>
           </div>

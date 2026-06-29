@@ -5,6 +5,9 @@ from backend.ai.provider_factory import ProviderFactory
 from backend.core.logger import logger
 
 class AIManager:
+    def __init__(self):
+        self.unhealthy_providers = set()
+
     @staticmethod
     def _get_db():
         return get_db()
@@ -44,6 +47,9 @@ class AIManager:
         last_error = None
         
         for priority_type, provider_name in priority_list:
+            if provider_name in self.unhealthy_providers:
+                continue
+                
             provider = ProviderFactory.get_provider(provider_name)
             
             t0 = time.time()
@@ -65,6 +71,8 @@ class AIManager:
                 duration = time.time() - t0
                 last_error = e
                 logger.error(f"AI Provider '{provider_name}' ({priority_type}) failed. Error: {e}")
+                self.unhealthy_providers.add(provider_name)
+                logger.warning(f"Marked provider '{provider_name}' as unhealthy. Circuit breaker active.")
                 
                 # Failure! Update metrics
                 await self._update_metrics(
@@ -75,7 +83,7 @@ class AIManager:
                 )
                 
         # If all providers failed, fall back to mock response to ensure system resilience (Goal 10)
-        logger.warning(f"All configured AI Providers failed. Last error: {last_error}. Using local MockLLM backup to ensure system availability.")
+        logger.warning(f"All configured AI Providers failed or are marked unhealthy. Last error: {last_error}. Using local MockLLM backup to ensure system availability.")
         from backend.ai.base_provider import BaseMockLLM
         fallback_mock = BaseMockLLM("SystemFallback")
         response = fallback_mock.invoke(prompt)

@@ -22,6 +22,32 @@ export default function InvestorDirectory() {
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [pitchInvestor, setPitchInvestor] = useState<Investor | null>(null);
+  const [pitchEmailText, setPitchEmailText] = useState('');
+
+  const generatePitchDraft = (investor: Investor) => {
+    return `Subject: Introduction: ${profile.startupName || 'Our Startup'} - Stage: ${profile.stage} stage fit
+
+Hi ${investor.name.split(' ')[0] || 'Team'},
+
+I noticed that you invest in early-stage ${investor.sectors.join(', ')} startups with check sizes of ${investor.ticketSize}, focusing on ${investor.geography}. 
+
+Our startup, ${profile.startupName || 'Studlyf Venture'}, is building in the ${profile.industry} sector. Here is a brief overview:
+"${profile.description || 'Describe startup value proposition.'}"
+
+We are currently at the ${profile.stage} stage and would love to share our pitch outline with you. 
+
+Do you have 10 minutes for a brief call next Tuesday or Thursday afternoon?
+
+Best regards,
+${profile.name}
+Founder, ${profile.startupName}`;
+  };
+
+  const openPitchAssistant = (inv: Investor) => {
+    setPitchInvestor(inv);
+    setPitchEmailText(generatePitchDraft(inv));
+  };
 
   useEffect(() => {
     fetchInvestors();
@@ -129,17 +155,64 @@ export default function InvestorDirectory() {
                 </div>
 
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', marginTop: 'auto' }}>
-                  <a 
-                    href={`mailto:${inv.contactEmail}`}
+                  <button 
+                    onClick={() => openPitchAssistant(inv)}
                     className="btn btn-primary" 
-                    style={{ padding: '0.45rem 1rem', fontSize: '0.8rem', width: '100%', textDecoration: 'none', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                    style={{ padding: '0.45rem 1rem', fontSize: '0.8rem', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', cursor: 'pointer' }}
                   >
                     <Mail size={14} /> Request Pitch Intro
-                  </a>
+                  </button>
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {pitchInvestor && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, backdropFilter: 'blur(8px)', padding: '1rem' }}>
+          <div className="glass-card slide-up" style={{ width: '100%', maxWidth: '500px', background: 'var(--bg-popover)', padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div className="flex-between" style={{ marginBottom: '1.25rem' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                <Mail size={18} style={{ color: 'var(--secondary)' }} /> Pitch Draft Assistant
+              </h3>
+              <button onClick={() => setPitchInvestor(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1rem' }}>✕</button>
+            </div>
+            
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              Personalized cold outreach email draft for <strong>{pitchInvestor.name}</strong> matching their vertical preference.
+            </p>
+
+            <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+              <textarea 
+                className="form-textarea" 
+                style={{ width: '100%', minHeight: '260px', padding: '0.75rem', fontSize: '0.85rem', lineHeight: 1.45, background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-light)' }}
+                value={pitchEmailText} 
+                onChange={(e) => setPitchEmailText(e.target.value)} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(pitchEmailText);
+                  showToast('Pitch email copied to clipboard!', 'success');
+                }}
+                className="btn btn-secondary" 
+                style={{ flex: 1 }}
+              >
+                Copy to Clipboard
+              </button>
+              <a 
+                href={`mailto:${pitchInvestor.contactEmail}?subject=${encodeURIComponent(`Introduction: ${profile.startupName || 'Our Startup'}`)}&body=${encodeURIComponent(pitchEmailText)}`}
+                className="btn btn-primary" 
+                style={{ flex: 1, textDecoration: 'none', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                onClick={() => setPitchInvestor(null)}
+              >
+                Open Mail App
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -109,6 +109,49 @@ export default function BuildAdvisor() {
     setActivePhase(0);
   };
 
+  const updateStackChoice = (layer: string, value: string) => {
+    if (!result) return;
+    const updatedStack = { ...result.stack, [layer]: value };
+    
+    let databaseMultiplier = 1.0;
+    if (value.toLowerCase().includes('aurora') || value.toLowerCase().includes('supabase')) {
+      databaseMultiplier = 1.35;
+    }
+    let hostingMultiplier = 1.0;
+    if (value.toLowerCase().includes('aws')) {
+      hostingMultiplier = 1.4;
+    }
+
+    const updatedCosts = result.costEstimates.map(c => {
+      const itemLower = c.item.toLowerCase();
+      if (itemLower.includes('database') || itemLower.includes('data')) {
+        return {
+          ...c,
+          mvp: `$${Math.round(15 * databaseMultiplier)}/mo`,
+          growth: `$${Math.round(60 * databaseMultiplier)}/mo`,
+          scale: `$${Math.round(250 * databaseMultiplier)}/mo`
+        };
+      }
+      if (itemLower.includes('hosting') || itemLower.includes('infrastructure')) {
+        return {
+          ...c,
+          mvp: `$${Math.round(20 * hostingMultiplier)}/mo`,
+          growth: `$${Math.round(100 * hostingMultiplier)}/mo`,
+          scale: `$${Math.round(450 * hostingMultiplier)}/mo`
+        };
+      }
+      return c;
+    });
+
+    setResult({
+      ...result,
+      stack: updatedStack,
+      costEstimates: updatedCosts
+    });
+    
+    showToast(`Architectural choice updated to ${value}!`, 'info');
+  };
+
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative' }}>
       {/* Background accents */}
@@ -336,6 +379,107 @@ export default function BuildAdvisor() {
                 );
               })}
             </div>
+
+            {/* Customizer Panel */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.01)', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 150px' }}>
+                <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>FRONTEND CORE</label>
+                <select 
+                  value={result.stack.frontend || result.stack.Frontend || ''} 
+                  onChange={(e) => updateStackChoice('frontend', e.target.value)}
+                  className="form-select" 
+                  style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                >
+                  <option value="React + Vite + Tailwind">React + Vite</option>
+                  <option value="Next.js + TailwindCSS">Next.js Framework</option>
+                  <option value="Vue.js + Vite">Vue.js Framework</option>
+                  <option value="SvelteKit + Tailwind">SvelteKit Compiler</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 150px' }}>
+                <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>BACKEND CORE</label>
+                <select 
+                  value={result.stack.backend || result.stack.Backend || ''} 
+                  onChange={(e) => updateStackChoice('backend', e.target.value)}
+                  className="form-select" 
+                  style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                >
+                  <option value="Python FastAPI + Uvicorn">Python FastAPI</option>
+                  <option value="Node.js (Express) + PM2">Node.js Express</option>
+                  <option value="Django Rest Framework">Django (Python)</option>
+                  <option value="Go (Gin Gonic) Server">Go REST Server</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 150px' }}>
+                <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>DATABASE INSTANCE</label>
+                <select 
+                  value={result.stack.database || result.stack.Database || ''} 
+                  onChange={(e) => updateStackChoice('database', e.target.value)}
+                  className="form-select" 
+                  style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                >
+                  <option value="MongoDB Atlas Cloud">MongoDB Atlas</option>
+                  <option value="Supabase (PostgreSQL) REST">Supabase Postgre</option>
+                  <option value="Redis Cluster (Cache)">Redis DB</option>
+                  <option value="Amazon Aurora Serverless">AWS MySQL / PG</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: '1 1 150px' }}>
+                <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>HOSTING ENGINE</label>
+                <select 
+                  value={result.stack.hosting || result.stack.Hosting || ''} 
+                  onChange={(e) => updateStackChoice('hosting', e.target.value)}
+                  className="form-select" 
+                  style={{ padding: '0.3rem 0.5rem', fontSize: '0.8rem' }}
+                >
+                  <option value="AWS ECS Fargate / EC2">AWS ECS</option>
+                  <option value="Vercel (Serverless deployments)">Vercel Engine</option>
+                  <option value="Docker + Nginx on VPS">VPS / Docker</option>
+                  <option value="Google Cloud Run Node">Google Cloud Run</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Interactive Architecture Diagram */}
+            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)', marginTop: '1.5rem', textAlign: 'center' }}>
+              <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', marginBottom: '1.25rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Interactive Deployment Architecture (Lovable/v0 Inspired)
+              </h4>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', padding: '0.5rem', position: 'relative' }}>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', width: '130px', padding: '0.75rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>CLIENT STACK</span>
+                  <strong style={{ fontSize: '0.76rem', color: '#fff' }}>{result.stack.frontend || result.stack.Frontend || 'React'}</strong>
+                </div>
+
+                <div style={{ color: 'var(--secondary)', fontSize: '1.2rem' }}>➔</div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', width: '130px', padding: '0.75rem', background: 'rgba(139, 92, 246, 0.05)', border: '1px solid rgba(139, 92, 246, 0.25)', borderRadius: '8px', boxShadow: '0 0 10px rgba(139, 92, 246, 0.05)' }}>
+                  <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>BACKEND CORE</span>
+                  <strong style={{ fontSize: '0.76rem', color: 'var(--accent-purple)' }}>{result.stack.backend || result.stack.Backend || 'FastAPI'}</strong>
+                </div>
+
+                <div style={{ color: 'var(--secondary)', fontSize: '1.2rem' }}>➔</div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', width: '130px', padding: '0.65rem', background: 'rgba(6, 182, 212, 0.05)', border: '1px solid rgba(6, 182, 212, 0.25)', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>DATABASE</span>
+                    <strong style={{ fontSize: '0.76rem', color: 'var(--secondary)' }}>{(result.stack.database || result.stack.Database || 'MongoDB').split(' ')[0]}</strong>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', width: '130px', padding: '0.65rem', background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', fontWeight: 600 }}>AI SERVICE</span>
+                    <strong style={{ fontSize: '0.76rem', color: 'var(--success)' }}>{(result.stack.ai || result.stack.AI || 'Gemini').split(' ')[0]}</strong>
+                  </div>
+                </div>
+              </div>
+              <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.03)', paddingTop: '0.75rem', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                Target Cloud Host Target: <strong style={{ color: '#fff' }}>{result.stack.hosting || result.stack.Hosting || 'AWS'}</strong>
+              </div>
+            </div>
+
           </div>
 
           {/* Phased Development Roadmap */}
