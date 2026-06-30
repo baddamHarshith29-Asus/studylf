@@ -92,7 +92,7 @@ export default function ProfileSettings() {
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#fff' }}>{name || 'Your Name'}</div>
+              <div style={{ fontSize: '0.92rem', fontWeight: 600, color: 'var(--text-primary)' }}>{name || 'Your Name'}</div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{email}</div>
             </div>
           </div>
@@ -166,7 +166,7 @@ export default function ProfileSettings() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.8rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Logged in as</span>
-                <span style={{ color: '#fff', fontWeight: 600 }}>{profile.name}</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{profile.name}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.4rem 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Startup</span>

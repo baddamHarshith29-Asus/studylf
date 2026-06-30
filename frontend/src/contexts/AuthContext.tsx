@@ -13,6 +13,11 @@ export interface Profile {
   avatar: string;
   is_public?: boolean;
   slug?: string;
+  legalEntityType?: string;
+  dpiitRecognized?: boolean;
+  incorporationDate?: string;
+  annualTurnoverCrores?: number;
+  annualRevenue?: string;
 }
 
 export interface ValidationScore {
@@ -44,6 +49,12 @@ export interface ValidationReport {
   marketResearch: MarketResearch;
 }
 
+export interface SubTask {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
 export interface RoadmapTask {
   id: string;
   text: string;
@@ -51,6 +62,11 @@ export interface RoadmapTask {
   stage: string;
   category: string;
   guideId?: string;
+  week?: number;
+  description?: string;
+  notes?: string;
+  subtasks?: SubTask[];
+  isCustom?: boolean;
 }
 
 export interface ChatSource {
@@ -126,7 +142,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     industry: 'AI & SaaS',
     country: 'India',
     stage: 'Idea',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150'
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+    legalEntityType: 'Unincorporated / Individual',
+    dpiitRecognized: false,
+    incorporationDate: '',
+    annualTurnoverCrores: 0,
+    annualRevenue: 'Pre-revenue'
   });
   const [validationReports, setValidationReports] = useState<ValidationReport[]>([]);
   const [roadmapTasks, setRoadmapTasks] = useState<RoadmapTask[]>([]);

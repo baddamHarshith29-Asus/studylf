@@ -219,6 +219,11 @@ class AuthService:
                         "category": task["category"],
                         "stage": stage_name,
                         "guide_id": task.get("guide_id"),
+                        "week": task.get("week", 1),
+                        "description": task.get("description", ""),
+                        "notes": "",
+                        "subtasks": [],
+                        "is_custom": False,
                         "created_at": datetime_now
                     })
             if tasks_to_insert:

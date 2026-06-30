@@ -25,6 +25,9 @@ interface Mentor {
   expertise: string[];
   availability: string;
   image: string;
+  geography: string;
+  stages: string[];
+  matchScore?: number;
 }
 
 interface RelationshipPathNode {
@@ -97,6 +100,14 @@ export default function Network() {
   const [bookingDate, setBookingDate] = useState('');
   const [bookingTime, setBookingTime] = useState('');
 
+  // Mentor Overrides State
+  const [selectedMenIndustry, setSelectedMenIndustry] = useState(profile.industry || 'AI & SaaS');
+  const [selectedMenStage, setSelectedMenStage] = useState(profile.stage || 'Idea');
+  const [selectedMenGeography, setSelectedMenGeography] = useState(profile.country || 'India');
+
+  // Consent Check for DPDP compliance
+  const [consentChecked, setConsentChecked] = useState(false);
+
   // Rava AI Professional Advisor state
   const [startupIdea, setStartupIdea] = useState(profile.description || '');
   const [networkRecs, setNetworkRecs] = useState<NetworkRecommendation[]>([]);
@@ -135,7 +146,7 @@ export default function Network() {
     try {
       const [invRes, menRes] = await Promise.all([
         apiFetch('/api/network/investors'),
-        apiFetch('/api/network/mentors')
+        apiFetch(`/api/network/mentors?industry=${selectedMenIndustry}&stage=${selectedMenStage}&geography=${selectedMenGeography}`)
       ]);
       if (invRes.ok) {
         const invData = await invRes.json();
@@ -151,6 +162,21 @@ export default function Network() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMentors(selectedMenIndustry, selectedMenStage, selectedMenGeography);
+  }, [selectedMenIndustry, selectedMenStage, selectedMenGeography]);
+
+  const fetchMentors = async (industry: string, stage: string, geography: string) => {
+    try {
+      const res = await apiFetch(`/api/network/mentors?industry=${industry}&stage=${stage}&geography=${geography}`);
+      if (res.ok) {
+        setMentors(await res.json());
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -481,6 +507,41 @@ export default function Network() {
       ) : activeTab === 'mentors' ? (
         /* Mentor Discovery Tab */
         <div className="slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          
+          {/* Outreach Override Control Panel */}
+          <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', padding: '1.25rem' }}>
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Industry Expertise</label>
+              <select className="form-select" value={selectedMenIndustry} onChange={(e) => setSelectedMenIndustry(e.target.value)}>
+                <option value="AI & SaaS">AI & SaaS</option>
+                <option value="Fintech">Fintech</option>
+                <option value="Healthtech">Healthtech</option>
+                <option value="Edtech">Edtech</option>
+                <option value="Deep Tech">Deep Tech</option>
+              </select>
+            </div>
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Venture Stage Focus</label>
+              <select className="form-select" value={selectedMenStage} onChange={(e) => setSelectedMenStage(e.target.value)}>
+                <option value="Idea">Idea Stage</option>
+                <option value="Validation">Validation Stage</option>
+                <option value="MVP">MVP Phase</option>
+                <option value="Revenue">Early Revenue</option>
+                <option value="Fundraising">Fundraising Round</option>
+              </select>
+            </div>
+
+            <div className="form-group" style={{ margin: 0 }}>
+              <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Geography</label>
+              <select className="form-select" value={selectedMenGeography} onChange={(e) => setSelectedMenGeography(e.target.value)}>
+                <option value="India">India</option>
+                <option value="US">United States</option>
+                <option value="Global">Global / Remote</option>
+              </select>
+            </div>
+          </div>
+
           <div style={{ position: 'relative' }}>
             <input 
               type="text" 
@@ -494,40 +555,63 @@ export default function Network() {
           </div>
 
           <div className="grid-3">
-            {filteredMentors.map(mentor => (
-              <div key={mentor.id} className="glass-card animate-glow" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div className="flex-center" style={{ gap: '0.75rem', alignSelf: 'flex-start', justifyContent: 'flex-start' }}>
-                  <img 
-                    src={mentor.image} 
-                    alt={mentor.name} 
-                    style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-light)' }} 
-                  />
-                  <div>
-                    <h4 style={{ fontSize: '0.98rem', fontWeight: 600 }}>{mentor.name}</h4>
-                    <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{mentor.role}</span>
+            {filteredMentors.map(mentor => {
+              const score = mentor.matchScore || 80;
+
+              return (
+                <div key={mentor.id} className="glass-card animate-glow" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div className="flex-between" style={{ alignItems: 'flex-start' }}>
+                    <div className="flex-center" style={{ gap: '0.75rem', alignSelf: 'flex-start', justifyContent: 'flex-start' }}>
+                      <img 
+                        src={mentor.image} 
+                        alt={mentor.name} 
+                        style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-light)' }} 
+                      />
+                      <div>
+                        <h4 style={{ fontSize: '0.98rem', fontWeight: 600 }}>{mentor.name}</h4>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{mentor.role}</span>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block' }}>Match Rate</span>
+                      <span style={{ fontSize: '1.02rem', fontWeight: 'bold', color: score > 75 ? 'var(--success)' : 'var(--warning)' }}>
+                        {score}%
+                      </span>
+                    </div>
+                  </div>
+
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{mentor.experience}</p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.72rem', background: 'rgba(255,255,255,0.01)', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.6rem' }}>Geography:</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{mentor.geography}</span>
+                    </div>
+                    <div>
+                      <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.6rem' }}>Preferred Stages:</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{mentor.stages.join(', ')}</span>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
+                    {mentor.expertise.map((exp, idx) => (
+                      <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.35rem' }}>{exp}</span>
+                    ))}
+                  </div>
+
+                  <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Avail: {mentor.availability}</span>
+                    <button 
+                      onClick={() => setBookingMentor(mentor)}
+                      className="btn btn-primary" 
+                      style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', borderRadius: '4px' }}
+                    >
+                      Book Session
+                    </button>
                   </div>
                 </div>
-
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{mentor.experience}</p>
-
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
-                  {mentor.expertise.map((exp, idx) => (
-                    <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.35rem' }}>{exp}</span>
-                  ))}
-                </div>
-
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Avail: {mentor.availability}</span>
-                  <button 
-                    onClick={() => setBookingMentor(mentor)}
-                    className="btn btn-primary" 
-                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', borderRadius: '4px' }}
-                  >
-                    Book Session
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : activeTab === 'relationship' ? (
@@ -538,11 +622,35 @@ export default function Network() {
             <p style={{ fontSize: '0.85rem' }}>STUDLYF maps secure paths to target investors using only your uploaded connections, avoiding third-party scrapers.</p>
             
             <form onSubmit={handleRelationshipIntelligence}>
-              <div style={{ border: '1px dashed var(--border-light)', borderRadius: 'var(--radius-sm)', padding: '1.25rem', textAlign: 'center', background: 'rgba(255,255,255,0.01)', marginBottom: '1.25rem', cursor: 'pointer', position: 'relative' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', margin: '0 0 1rem 0', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                <input 
+                  type="checkbox" 
+                  id="consentCheck" 
+                  checked={consentChecked} 
+                  onChange={(e) => setConsentChecked(e.target.checked)} 
+                  style={{ marginTop: '3px', cursor: 'pointer' }}
+                />
+                <label htmlFor="consentCheck" style={{ cursor: 'pointer', lineHeight: 1.35 }}>
+                  I certify that I have explicit consent from these contacts to process their information. I authorize STUDLYF to map connections in compliance with <strong>India's Digital Personal Data Protection (DPDP) Act, 2023</strong>.
+                </label>
+              </div>
+
+              <div style={{ 
+                border: '1px dashed var(--border-light)', 
+                borderRadius: 'var(--radius-sm)', 
+                padding: '1.25rem', 
+                textAlign: 'center', 
+                background: 'rgba(255,255,255,0.01)', 
+                marginBottom: '1.25rem', 
+                cursor: consentChecked ? 'pointer' : 'not-allowed', 
+                position: 'relative',
+                opacity: consentChecked ? 1 : 0.55
+              }}>
                 <input 
                   type="file" 
                   accept=".csv,.xlsx" 
-                  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0, cursor: 'pointer' }}
+                  style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, opacity: 0, cursor: consentChecked ? 'pointer' : 'not-allowed' }}
+                  disabled={!consentChecked}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
@@ -734,7 +842,7 @@ export default function Network() {
                 {networkRecs.map((rec, idx) => (
                   <div key={idx} style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <div className="flex-between">
-                      <h4 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff' }}>{rec.name}</h4>
+                      <h4 style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)' }}>{rec.name}</h4>
                       <span className="badge badge-secondary" style={{ fontSize: '0.65rem' }}>{rec.recommendedRole}</span>
                     </div>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>{rec.company}</span>
@@ -790,7 +898,7 @@ export default function Network() {
                     <div key={job.id} style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                       <div className="flex-between">
                         <div>
-                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff' }}>{job.title}</h4>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>{job.title}</h4>
                           <span style={{ fontSize: '0.78rem', color: 'var(--secondary)' }}>{job.startupName} • {job.startupStage} Stage</span>
                         </div>
                         <span className="badge badge-primary">{job.roleType}</span>
@@ -845,7 +953,7 @@ export default function Network() {
                           <span className="badge badge-secondary" style={{ fontSize: '0.65rem' }}>Pending</span>
                         )}
                       </div>
-                      <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', marginTop: '0.15rem' }}>{a.applicantName}</h4>
+                      <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.15rem' }}>{a.applicantName}</h4>
                       <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{a.applicantEmail}</span>
                       <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '0.4rem', fontStyle: 'italic', marginBottom: '0.5rem' }}>
                         "{a.pitchNotes}"
@@ -997,7 +1105,7 @@ export default function Network() {
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <h4 style={{ fontSize: '0.95rem', color: '#fff' }}>{applyingJob.title}</h4>
+                  <h4 style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{applyingJob.title}</h4>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>At {applyingJob.startupName}</p>
                 </div>
 

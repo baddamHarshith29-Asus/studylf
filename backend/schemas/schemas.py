@@ -35,6 +35,11 @@ class ProfileResponse(BaseModel):
     country: str
     stage: str
     avatar: str
+    legalEntityType: Optional[str] = "Unincorporated / Individual"
+    dpiitRecognized: Optional[bool] = False
+    incorporationDate: Optional[str] = ""
+    annualTurnoverCrores: Optional[float] = 0.0
+    annualRevenue: Optional[str] = "Pre-revenue"
 
     class Config:
         from_attributes = True
@@ -113,25 +118,55 @@ class ValidateResponse(BaseModel):
 
 
 # Roadmap
+class SubTask(BaseModel):
+    id: str
+    text: str
+    completed: bool
+
 class TaskInfo(BaseModel):
     id: str
     text: str
     completed: bool
     category: str
     guideId: Optional[str] = None
+    week: int
+    description: str
+    notes: Optional[str] = ""
+    subtasks: Optional[List[SubTask]] = []
+    isCustom: Optional[bool] = False
 
     class Config:
         from_attributes = True
 
 class RoadmapResponse(BaseModel):
-    stage: str
+    activeStage: str
+    selectedStage: str
     tasks: List[TaskInfo]
+    progress: int
 
 class ToggleTaskRequest(BaseModel):
     id: str
 
 class ToggleTaskResponse(BaseModel):
     success: bool
+
+class UpdateTaskRequest(BaseModel):
+    id: str
+    notes: Optional[str] = ""
+    subtasks: Optional[List[SubTask]] = []
+
+class AddTaskRequest(BaseModel):
+    stage: str
+    week: int
+    text: str
+    category: str
+    description: Optional[str] = ""
+
+class DeleteTaskRequest(BaseModel):
+    id: str
+
+class ResetRoadmapRequest(BaseModel):
+    stage: str
 
 class SlideInfo(BaseModel):
     id: int
@@ -211,6 +246,7 @@ class InvestorResponse(BaseModel):
     readinessScore: int
     matchReason: str
     contactEmail: str
+    readinessBreakdown: Optional[Dict[str, int]] = None
 
     class Config:
         from_attributes = True
@@ -225,6 +261,7 @@ class MentorResponse(BaseModel):
     geography: str
     stages: List[str]
     image: str
+    matchScore: Optional[int] = 80
 
     class Config:
         from_attributes = True

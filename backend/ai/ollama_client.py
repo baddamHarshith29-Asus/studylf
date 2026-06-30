@@ -23,7 +23,7 @@ class OllamaProvider(BaseAIProvider):
     async def _resolve_model(self) -> str:
         configured = self._get_model_name()
         try:
-            async with httpx.AsyncClient(timeout=3.0) as client:
+            async with httpx.AsyncClient(timeout=10.0) as client:
                 r = await client.get("http://localhost:11434/api/tags")
                 if r.status_code == 200:
                     data = r.json()
@@ -48,9 +48,20 @@ class OllamaProvider(BaseAIProvider):
                             base = tag.split(":")[0]
                             if base == configured:
                                 return tag
+                    # 4.5. Match substring (e.g. if tag contains configured name)
+                    for tag in installed_tags:
+                        if configured.lower() in tag.lower():
+                            return tag
                                 
-                    # 5. Fallback to the first installed model
-                    fallback_model = installed_tags[0]
+                    # 5. Fallback to a non-reasoning installed model if possible, otherwise first installed
+                    fallback_model = None
+                    for tag in installed_tags:
+                        tag_lower = tag.lower()
+                        if "deepseek-r1" not in tag_lower and "thinking" not in tag_lower:
+                            fallback_model = tag
+                            break
+                    if not fallback_model:
+                        fallback_model = installed_tags[0]
                     logger.warning(f"Configured Ollama model '{configured}' not found in installed models {installed_tags}. Falling back to '{fallback_model}'.")
                     return fallback_model
         except Exception as e:

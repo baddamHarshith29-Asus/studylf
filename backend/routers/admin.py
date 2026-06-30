@@ -235,7 +235,7 @@ def save_ai_model(data: AIModelSaveRequest, db = Depends(get_db)):
     if data.provider.lower() != "ollama":
         raise HTTPException(status_code=400, detail="Only Ollama provider model configuration is currently supported.")
     
-    valid_models = {"llama3", "llama3.1", "qwen3", "deepseek-r1", "mistral"}
+    valid_models = {"llama3", "llama3.1", "qwen3", "qwen", "qwen2.5-coder", "deepseek-r1", "mistral"}
     if data.model.lower() not in valid_models:
         raise HTTPException(status_code=400, detail=f"Invalid model name. Choose from {', '.join(valid_models)}")
         

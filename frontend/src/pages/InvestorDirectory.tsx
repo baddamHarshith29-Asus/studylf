@@ -15,6 +15,12 @@ interface Investor {
   readinessScore: number;
   matchReason: string;
   contactEmail: string;
+  readinessBreakdown?: {
+    team: number;
+    product: number;
+    market: number;
+    traction: number;
+  };
 }
 
 export default function InvestorDirectory() {
@@ -25,17 +31,22 @@ export default function InvestorDirectory() {
   const [pitchInvestor, setPitchInvestor] = useState<Investor | null>(null);
   const [pitchEmailText, setPitchEmailText] = useState('');
 
+  // Overriding Outreach Configuration State
+  const [selectedIndustry, setSelectedIndustry] = useState(profile.industry || 'AI & SaaS');
+  const [selectedStage, setSelectedStage] = useState(profile.stage || 'Idea');
+  const [selectedRevenue, setSelectedRevenue] = useState(profile.annualRevenue || 'Pre-revenue');
+
   const generatePitchDraft = (investor: Investor) => {
-    return `Subject: Introduction: ${profile.startupName || 'Our Startup'} - Stage: ${profile.stage} stage fit
+    return `Subject: Introduction: ${profile.startupName || 'Our Startup'} - Stage: ${selectedStage} stage fit
 
 Hi ${investor.name.split(' ')[0] || 'Team'},
 
 I noticed that you invest in early-stage ${investor.sectors.join(', ')} startups with check sizes of ${investor.ticketSize}, focusing on ${investor.geography}. 
 
-Our startup, ${profile.startupName || 'Studlyf Venture'}, is building in the ${profile.industry} sector. Here is a brief overview:
+Our startup, ${profile.startupName || 'Studlyf Venture'}, is building in the ${selectedIndustry} sector. Here is a brief overview:
 "${profile.description || 'Describe startup value proposition.'}"
 
-We are currently at the ${profile.stage} stage and would love to share our pitch outline with you. 
+We are currently at the ${selectedStage} stage with a revenue profile of ${selectedRevenue} and would love to share our pitch outline with you. 
 
 Do you have 10 minutes for a brief call next Tuesday or Thursday afternoon?
 
@@ -50,13 +61,18 @@ Founder, ${profile.startupName}`;
   };
 
   useEffect(() => {
-    fetchInvestors();
-  }, []);
+    fetchInvestors(selectedIndustry, selectedStage, selectedRevenue);
+  }, [selectedIndustry, selectedStage, selectedRevenue]);
 
-  const fetchInvestors = async () => {
+  const fetchInvestors = async (industry: string, stage: string, revenue: string) => {
     setLoading(true);
     try {
-      const res = await apiFetch('/api/network/investors');
+      const queryParams = new URLSearchParams({
+        industry,
+        stage,
+        revenue
+      }).toString();
+      const res = await apiFetch(`/api/network/investors?${queryParams}`);
       if (res.ok) {
         setInvestors(await res.json());
       }
@@ -76,14 +92,82 @@ Founder, ${profile.startupName}`;
     );
   });
 
+  // Extract general readiness scores from first listing (representing the current startup profile context)
+  const currentReadiness = investors[0]?.readinessBreakdown || {
+    team: 50,
+    product: 40,
+    market: 50,
+    traction: 30
+  };
+
+  const overallReadinessAvg = Math.round((currentReadiness.team + currentReadiness.product + currentReadiness.market + currentReadiness.traction) / 4);
+
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
       {/* Header */}
       <div className="page-header">
         <div className="page-title-section">
           <h2 className="gradient-text">Venture Capital Discovery</h2>
           <p>Explore matching angel networks, VC partners, and startup grant providers calculated using your company stage and sector.</p>
+        </div>
+      </div>
+
+      {/* Startup Fundraising Readiness Scorecard */}
+      <div className="glass-card slide-up" style={{ padding: '1.25rem 1.5rem', display: 'grid', gridTemplateColumns: '1fr 320px', gap: '2rem', alignItems: 'center' }}>
+        <div>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 0.5rem 0' }}>
+            📊 General Fundraising Readiness Scorecard
+          </h3>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', margin: 0 }}>
+            This card rates your venture's compliance for seed/angel checks across the four core investment pillars. Add legal entity configuration and complete validation roadmaps to improve scores.
+          </p>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div className="flex-between">
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Overall Readiness Rank:</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: overallReadinessAvg > 70 ? 'var(--success)' : 'var(--warning)' }}>{overallReadinessAvg}%</span>
+          </div>
+          <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ width: `${overallReadinessAvg}%`, height: '100%', background: 'linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)' }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Outreach Override Control Panel */}
+      <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', padding: '1.25rem' }}>
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Industry Focus</label>
+          <select className="form-select" value={selectedIndustry} onChange={(e) => setSelectedIndustry(e.target.value)}>
+            <option value="AI & SaaS">AI & SaaS</option>
+            <option value="Fintech">Fintech</option>
+            <option value="Healthtech">Healthtech</option>
+            <option value="Edtech">Edtech</option>
+            <option value="Deep Tech">Deep Tech</option>
+          </select>
+        </div>
+
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Venture Stage</label>
+          <select className="form-select" value={selectedStage} onChange={(e) => setSelectedStage(e.target.value)}>
+            <option value="Idea">Idea Stage</option>
+            <option value="Validation">Validation Stage</option>
+            <option value="MVP">MVP Phase</option>
+            <option value="Revenue">Early Revenue</option>
+            <option value="Fundraising">Fundraising Round</option>
+          </select>
+        </div>
+
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Annual Revenue Profile</label>
+          <select className="form-select" value={selectedRevenue} onChange={(e) => setSelectedRevenue(e.target.value)}>
+            <option value="Pre-revenue">Pre-revenue</option>
+            <option value="< $10k ARR">&lt; $10k ARR</option>
+            <option value="$10k - $50k ARR">$10k - $50k ARR</option>
+            <option value="$50k - $100k ARR">$50k - $100k ARR</option>
+            <option value="> $100k ARR">&gt; $100k ARR</option>
+          </select>
         </div>
       </div>
 
@@ -113,12 +197,7 @@ Founder, ${profile.startupName}`;
       ) : (
         <div className="grid-2">
           {filteredInvestors.map((inv) => {
-            const matchesStage = inv.stages.includes(profile.stage);
-            const matchesSector = inv.sectors.some(s => profile.industry.toLowerCase().includes(s.toLowerCase()));
-            let score = inv.readinessScore;
-            if (!matchesStage) score -= 20;
-            if (!matchesSector) score -= 15;
-            score = Math.max(40, score);
+            const score = inv.readinessScore;
 
             return (
               <div key={inv.id} className="glass-card animate-glow" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -153,6 +232,51 @@ Founder, ${profile.startupName}`;
                     <span key={idx} className="badge badge-primary" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem' }}>{sec}</span>
                   ))}
                 </div>
+
+                {/* Specific Fundraising Readiness Scorecard inside Card */}
+                {inv.readinessBreakdown && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.75rem', marginTop: '0.25rem' }}>
+                    <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>Fundraising Readiness Breakdown:</span>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem 1rem', fontSize: '0.72rem' }}>
+                      <div>
+                        <div className="flex-between">
+                          <span style={{ color: 'var(--text-secondary)' }}>Team Score:</span>
+                          <span style={{ fontWeight: 600 }}>{inv.readinessBreakdown.team}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${inv.readinessBreakdown.team}%`, height: '100%', background: 'var(--primary)' }} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex-between">
+                          <span style={{ color: 'var(--text-secondary)' }}>Product Score:</span>
+                          <span style={{ fontWeight: 600 }}>{inv.readinessBreakdown.product}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${inv.readinessBreakdown.product}%`, height: '100%', background: 'var(--secondary)' }} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex-between">
+                          <span style={{ color: 'var(--text-secondary)' }}>Market Fit:</span>
+                          <span style={{ fontWeight: 600 }}>{inv.readinessBreakdown.market}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${inv.readinessBreakdown.market}%`, height: '100%', background: 'var(--success)' }} />
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex-between">
+                          <span style={{ color: 'var(--text-secondary)' }}>Traction Score:</span>
+                          <span style={{ fontWeight: 600 }}>{inv.readinessBreakdown.traction}%</span>
+                        </div>
+                        <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                          <div style={{ width: `${inv.readinessBreakdown.traction}%`, height: '100%', background: 'var(--warning)' }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', marginTop: 'auto' }}>
                   <button 

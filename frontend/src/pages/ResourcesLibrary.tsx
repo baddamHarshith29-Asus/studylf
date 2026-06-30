@@ -484,7 +484,7 @@ Name: Authorized Partner, ${investorName}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxWidth: '65%' }}>
                   <span className="badge badge-secondary" style={{ width: 'fit-content', background: 'rgba(242,101,34,0.15)', color: '#f26522', fontWeight: 700 }}>Featured Collection</span>
-                  <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#fff' }}>Startup School: Essential Advice</h3>
+                  <h3 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)' }}>Startup School: Essential Advice</h3>
                   <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     Access YC’s most critical lectures and essays covering the launch phase, building MVPs, validation strategies, and pitch guidelines. Curated directly for startup founders.
                   </p>
@@ -505,7 +505,7 @@ Name: Authorized Partner, ${investorName}
               {founderResources.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div className="flex-between">
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Shield size={18} style={{ color: '#f26522' }} /> Becoming a Founder
                     </h3>
                     <button onClick={() => { setLibraryMode('archive'); setActiveCategory('Becoming a Founder'); }} className="btn btn-outline" style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}>
@@ -528,7 +528,7 @@ Name: Authorized Partner, ${investorName}
                             <Bookmark size={16} fill={res.bookmarked ? 'var(--primary)' : 'none'} />
                           </button>
                         </div>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{res.title}</h4>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{res.title}</h4>
                         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '36px', lineHeight: 1.4 }}>{res.desc}</p>
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                           <span>By {res.author}</span>
@@ -544,7 +544,7 @@ Name: Authorized Partner, ${investorName}
               {mvpResources.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div className="flex-between">
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Video size={18} style={{ color: 'var(--secondary)' }} /> Product & MVP Development
                     </h3>
                     <button onClick={() => { setLibraryMode('archive'); setActiveCategory('Product & MVP'); }} className="btn btn-outline" style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}>
@@ -567,7 +567,7 @@ Name: Authorized Partner, ${investorName}
                             <Bookmark size={16} fill={res.bookmarked ? 'var(--primary)' : 'none'} />
                           </button>
                         </div>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{res.title}</h4>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{res.title}</h4>
                         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '36px', lineHeight: 1.4 }}>{res.desc}</p>
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                           <span>By {res.author}</span>
@@ -583,7 +583,7 @@ Name: Authorized Partner, ${investorName}
               {fundraisingResources.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div className="flex-between">
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <Play size={18} style={{ color: 'var(--primary)' }} /> Fundraising & Capital
                     </h3>
                     <button onClick={() => { setLibraryMode('archive'); setActiveCategory('Fundraising'); }} className="btn btn-outline" style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}>
@@ -606,7 +606,7 @@ Name: Authorized Partner, ${investorName}
                             <Bookmark size={16} fill={res.bookmarked ? 'var(--primary)' : 'none'} />
                           </button>
                         </div>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{res.title}</h4>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{res.title}</h4>
                         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '36px', lineHeight: 1.4 }}>{res.desc}</p>
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                           <span>By {res.author}</span>
@@ -622,7 +622,7 @@ Name: Authorized Partner, ${investorName}
               {legalResources.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <div className="flex-between">
-                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <FileText size={18} style={{ color: '#06b6d4' }} /> Legal & Operations Templates
                     </h3>
                     <button onClick={() => { setLibraryMode('archive'); setActiveCategory('Legal'); }} className="btn btn-outline" style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem' }}>
@@ -645,7 +645,7 @@ Name: Authorized Partner, ${investorName}
                             <Bookmark size={16} fill={res.bookmarked ? 'var(--primary)' : 'none'} />
                           </button>
                         </div>
-                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff', lineHeight: 1.3 }}>{res.title}</h4>
+                        <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>{res.title}</h4>
                         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '36px', lineHeight: 1.4 }}>{res.desc}</p>
                         <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.65rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                           <span>By {res.author}</span>
@@ -677,7 +677,7 @@ Name: Authorized Partner, ${investorName}
                 }}
               >
                 <div className="flex-between">
-                  <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Filters</h4>
+                  <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Filters</h4>
                   <button onClick={handleClearFilters} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.72rem', cursor: 'pointer', fontWeight: 600 }}>Reset All</button>
                 </div>
 
@@ -783,7 +783,7 @@ Name: Authorized Partner, ${investorName}
                 ) : filteredResources.length === 0 ? (
                   <div className="flex-center" style={{ flexDirection: 'column', gap: '0.75rem', padding: '4rem', color: 'var(--text-muted)', textAlign: 'center' }}>
                     <BookOpen size={42} />
-                    <h4 style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 600 }}>No startup resources found</h4>
+                    <h4 style={{ color: 'var(--text-primary)', fontSize: '0.95rem', fontWeight: 600 }}>No startup resources found</h4>
                     <p style={{ fontSize: '0.8rem', maxWidth: '300px' }}>Try clearing filters or running a new search query.</p>
                   </div>
                 ) : (
@@ -805,7 +805,7 @@ Name: Authorized Partner, ${investorName}
                         </div>
 
                         <div>
-                          <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, marginBottom: '0.25rem' }}>{res.title}</h4>
+                          <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: '0.25rem' }}>{res.title}</h4>
                           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>By {res.author} • {res.category}</span>
                         </div>
 
@@ -1147,7 +1147,7 @@ Name: Authorized Partner, ${investorName}
                     overflowY: 'auto'
                   }}
                 >
-                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
                     <Play size={14} style={{ color: 'var(--primary)' }} /> Video Chapters
                   </h4>
                   {selectedResource.chapters && selectedResource.chapters.length > 0 ? (
@@ -1173,7 +1173,7 @@ Name: Authorized Partner, ${investorName}
                           onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                         >
                           <span style={{ color: 'var(--primary)', fontWeight: 700, fontFamily: 'monospace' }}>{ch.timestamp}</span>
-                          <span style={{ color: '#fff' }}>{ch.title}</span>
+                          <span style={{ color: 'var(--text-primary)' }}>{ch.title}</span>
                         </button>
                       ))}
                     </div>
@@ -1186,7 +1186,7 @@ Name: Authorized Partner, ${investorName}
               {/* Bottom Row: Transcript & Details */}
               <div className="grid-2" style={{ gap: '1.5rem', gridTemplateColumns: '2.3fr 0.7fr' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>Lecture Transcript</h4>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>Lecture Transcript</h4>
                   <div 
                     style={{ 
                       maxHeight: '220px', 
@@ -1206,19 +1206,19 @@ Name: Authorized Partner, ${investorName}
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>Meta Stats</h4>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)' }}>Meta Stats</h4>
                   <div className="glass-card" style={{ padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'rgba(255,255,255,0.02)', fontSize: '0.78rem' }}>
                     <div className="flex-between">
                       <span style={{ color: 'var(--text-muted)' }}>Total Views:</span>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>{selectedResource.views} views</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedResource.views} views</span>
                     </div>
                     <div className="flex-between">
                       <span style={{ color: 'var(--text-muted)' }}>Duration:</span>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>{selectedResource.duration}</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedResource.duration}</span>
                     </div>
                     <div className="flex-between">
                       <span style={{ color: 'var(--text-muted)' }}>Author:</span>
-                      <span style={{ color: '#fff', fontWeight: 600 }}>{selectedResource.author}</span>
+                      <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedResource.author}</span>
                     </div>
                   </div>
                 </div>
@@ -1276,7 +1276,7 @@ Name: Authorized Partner, ${investorName}
                 
                 {/* Left Panel: Dynamic Table of Contents */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'sticky', top: 0, height: 'fit-content' }}>
-                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Document Outline</h4>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Document Outline</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: '0.75rem' }}>
                     {selectedResource.content?.split('\n').filter(line => line.trim().startsWith('# ') || line.trim().startsWith('## ')).map((line, idx) => {
                       const isH1 = line.trim().startsWith('# ');
@@ -1336,7 +1336,7 @@ Name: Authorized Partner, ${investorName}
           <div className="glass-card slide-up" style={{ width: '94%', maxWidth: '650px', background: 'var(--bg-popover)', padding: '2rem', maxHeight: '90vh', overflowY: 'auto' }}>
             
             <div className="flex-between" style={{ marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.75rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>Publish to Startup Resource Library</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>Publish to Startup Resource Library</h3>
               <button onClick={() => setShowUploadModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <X size={18} />
               </button>

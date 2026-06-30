@@ -33,6 +33,12 @@ export default function StartupProfile() {
   const [isPublic, setIsPublic] = useState(profile.is_public || false);
   const [updating, setUpdating] = useState(false);
 
+  const [legalEntityType, setLegalEntityType] = useState(profile.legalEntityType || 'Unincorporated / Individual');
+  const [dpiitRecognized, setDpiitRecognized] = useState(profile.dpiitRecognized || false);
+  const [incorporationDate, setIncorporationDate] = useState(profile.incorporationDate || '');
+  const [annualTurnoverCrores, setAnnualTurnoverCrores] = useState(profile.annualTurnoverCrores || 0.0);
+  const [annualRevenue, setAnnualRevenue] = useState(profile.annualRevenue || 'Pre-revenue');
+
   // Opportunity state
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
@@ -84,7 +90,12 @@ export default function StartupProfile() {
           industry,
           country,
           stage,
-          is_public: isPublic
+          is_public: isPublic,
+          legalEntityType,
+          dpiitRecognized,
+          incorporationDate,
+          annualTurnoverCrores,
+          annualRevenue
         })
       });
       if (res.ok) {
@@ -237,6 +248,66 @@ export default function StartupProfile() {
               />
             </div>
 
+            <div className="form-group">
+              <label className="form-label">Legal Entity Type</label>
+              <select className="form-select" value={legalEntityType} onChange={(e) => setLegalEntityType(e.target.value)}>
+                <option value="Private Limited Company">Private Limited Company</option>
+                <option value="Limited Liability Partnership (LLP)">Limited Liability Partnership (LLP)</option>
+                <option value="Registered Partnership Firm">Registered Partnership Firm</option>
+                <option value="Sole Proprietorship">Sole Proprietorship</option>
+                <option value="Unincorporated / Individual">Unincorporated / Individual</option>
+              </select>
+            </div>
+
+            <div className="grid-2" style={{ gap: '1rem' }}>
+              <div className="form-group" style={{ display: 'flex', alignItems: 'center' }}>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginTop: '1.25rem' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={dpiitRecognized} 
+                    onChange={(e) => setDpiitRecognized(e.target.checked)} 
+                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                  />
+                  DPIIT Recognized Startup?
+                </label>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Incorporation Date</label>
+                <input 
+                  type="date" 
+                  className="form-input" 
+                  value={incorporationDate} 
+                  onChange={(e) => setIncorporationDate(e.target.value)} 
+                />
+              </div>
+            </div>
+
+            <div className="grid-2" style={{ gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label">Annual Turnover (in ₹ Crores)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  className="form-input" 
+                  placeholder="e.g. 1.5"
+                  value={annualTurnoverCrores} 
+                  onChange={(e) => setAnnualTurnoverCrores(Number(e.target.value))} 
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Annual Revenue / Runway</label>
+                <select className="form-select" value={annualRevenue} onChange={(e) => setAnnualRevenue(e.target.value)}>
+                  <option value="Pre-revenue">Pre-revenue</option>
+                  <option value="< $10k ARR">&lt; $10k ARR</option>
+                  <option value="$10k - $50k ARR">$10k - $50k ARR</option>
+                  <option value="$50k - $100k ARR">$50k - $100k ARR</option>
+                  <option value="> $100k ARR">&gt; $100k ARR</option>
+                </select>
+              </div>
+            </div>
+
             {isPublic && (
               <div style={{ background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.15)', padding: '0.75rem', borderRadius: '6px', fontSize: '0.78rem', color: 'var(--primary-glow)' }}>
                 Your public profile URL: <strong>/startup/{profile.slug || 'generating...'}</strong>
@@ -296,7 +367,7 @@ export default function StartupProfile() {
                 {applications.map((app) => (
                   <div key={app.id} style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-light)', borderRadius: '6px' }}>
                     <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Role: {app.opportunityTitle}</span>
-                    <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', marginTop: '0.15rem' }}>{app.applicantName}</h4>
+                    <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.15rem' }}>{app.applicantName}</h4>
                     <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{app.applicantEmail}</span>
                     <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', marginTop: '0.4rem', fontStyle: 'italic' }}>
                       "{app.pitchNotes}"

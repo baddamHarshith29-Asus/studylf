@@ -9,8 +9,8 @@ from backend.services.funding_service import FundingService
 router = APIRouter()
 
 @router.get("/funding/schemes", response_model=List[SchemeResponse])
-def get_schemes(db = Depends(get_db)):
-    schemes = FundingService.get_schemes(db)
+async def get_schemes(db = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
+    schemes = await FundingService.get_schemes(db, current_user)
     result = []
     for s in schemes:
         result.append({

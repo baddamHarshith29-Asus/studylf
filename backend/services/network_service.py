@@ -10,8 +10,49 @@ from bson import ObjectId
 
 class NetworkService:
     @staticmethod
-    def get_investors(db, user: User) -> List[Dict[str, Any]]:
-        """Queries investors and applies dynamic matching scores based on profile stage, sector, and country."""
+    async def get_investors(db, user: Optional[User], industry: Optional[str] = None, stage: Optional[str] = None, revenue: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Queries investors, performs dynamic web searches to fetch real-world matches, caches them, and applies matching scores."""
+        # 1. Fetch user profile context for search tailoring and overrides
+        p = user.profile if user else None
+        
+        country = p.country if p else "India"
+        stage_val = stage if stage else (p.stage if p else "Idea")
+        industry_val = industry if industry else (p.industry if p else "AI & SaaS")
+        revenue_val = revenue if revenue else (getattr(p, "annual_revenue", None) if p else "Pre-revenue")
+            
+        # 2. Perform live search retrieval of VCs/Angels
+        from backend.services.ai_service import AIService
+        real_investors = await AIService.search_real_investors(stage=stage_val, geography=country, industry=industry_val)
+        
+        # 3. Cache/Upsert real investors in MongoDB database
+        import hashlib
+        for inv in real_investors:
+            name = inv.get("name")
+            if not name:
+                continue
+            name_hash = hashlib.md5(name.encode('utf-8')).hexdigest()[:8]
+            investor_id = f"inv-real-{name_hash}"
+            
+            db_investor = {
+                "id": investor_id,
+                "name": name,
+                "type": inv.get("type", "Venture Capital"),
+                "ticket_size": inv.get("ticket_size", "$100K"),
+                "stages": inv.get("stages", [stage_val]),
+                "sectors": inv.get("sectors", [industry_val]),
+                "geography": inv.get("geography", country),
+                "readiness_score": inv.get("readiness_score", 80),
+                "match_reason": inv.get("match_reason", ""),
+                "contact_email": inv.get("contact_email", "info@firm.com")
+            }
+            
+            db.investors.update_one(
+                {"id": investor_id},
+                {"$set": db_investor},
+                upsert=True
+            )
+            
+        # 4. Query all stored investors
         investors = list(db.investors.find({}))
         investor_list = []
         for i in investors:
@@ -28,27 +69,26 @@ class NetworkService:
                 "contact_email": i.get("contact_email", "")
             })
             
-        profile_data = {}
-        if user:
-            p = user.profile
-            if p:
-                profile_data = {
-                    "stage": p.stage or "Idea",
-                    "industry": p.industry or "AI & SaaS",
-                    "country": p.country or "India"
-                }
-        if not profile_data:
-            profile_data = {
-                "stage": "Idea",
-                "industry": "AI & SaaS",
-                "country": "India"
-            }
+        profile_data = {
+            "startupName": p.startup_name if p else "",
+            "description": p.description if p else "",
+            "stage": stage_val,
+            "industry": industry_val,
+            "country": country,
+            "legalEntityType": getattr(p, "legal_entity_type", "Unincorporated / Individual") if p else "Unincorporated / Individual",
+            "dpiitRecognized": getattr(p, "dpiit_recognized", False) if p else False,
+            "incorporationDate": getattr(p, "incorporation_date", "") if p else "",
+            "annualTurnoverCrores": getattr(p, "annual_turnover_crores", 0.0) if p else 0.0,
+            "annualRevenue": revenue_val,
+            "has_validation": db.validation_reports.count_documents({"user_id": user.id}) > 0 if user else False,
+            "has_applications": db.applications.count_documents({"user_id": user.id}) > 0 if user else False
+        }
             
         return RecommendationService.match_investors(profile_data, investor_list)
 
     @staticmethod
-    def get_mentors(db, user: User) -> List[Dict[str, Any]]:
-        """Queries mentors and ranks them by stage fit."""
+    def get_mentors(db, user: Optional[User], industry: Optional[str] = None, stage: Optional[str] = None, geography: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Queries mentors and ranks them by stage, industry, and geography fit."""
         mentors = list(db.mentors.find({}))
         mentor_list = []
         for m in mentors:
@@ -64,11 +104,34 @@ class NetworkService:
                 "image": m.get("image", "")
             })
             
-        profile_data = {"stage": user.profile.stage if user and user.profile else "Idea"}
+        stage_val = stage if stage else (user.profile.stage if user and user.profile else "Idea")
+        industry_val = industry if industry else (user.profile.industry if user and user.profile else "AI & SaaS")
+        geo_val = geography if geography else (user.profile.country if user and user.profile else "India")
+        
+        profile_data = {"stage": stage_val}
         sorted_mentors = RecommendationService.match_mentors(profile_data, mentor_list)
         
         result = []
         for m in sorted_mentors:
+            # Dynamic matching score calculation
+            m_exp = [x.lower() for x in m["expertise"]]
+            industry_words = [w.lower() for w in industry_val.replace("&", " ").split()]
+            expertise_match = any(any(w in x for w in industry_words) for x in m_exp)
+            
+            stages = [s.lower() for s in m["stages"]]
+            stage_match = stage_val.lower() in stages
+            
+            geo_match = m["geography"].lower() == "any" or m["geography"].lower() == "global" or geo_val.lower() in m["geography"].lower()
+            
+            score = 100
+            if not stage_match:
+                score -= 20
+            if not expertise_match:
+                score -= 15
+            if not geo_match:
+                score -= 10
+            score = max(40, score)
+            
             result.append({
                 "id": m["id"],
                 "name": m["name"],
@@ -78,9 +141,10 @@ class NetworkService:
                 "experience": m["experience"],
                 "geography": m["geography"],
                 "stages": m["stages"],
-                "image": m["image"]
+                "image": m["image"],
+                "matchScore": score
             })
-        return result
+        return sorted(result, key=lambda x: x["matchScore"], reverse=True)
         
     @staticmethod
     def get_relationship_path(user: User, contact_name: str, target_entity: str) -> Dict[str, Any]:

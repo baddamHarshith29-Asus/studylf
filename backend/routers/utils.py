@@ -158,12 +158,12 @@ async def get_dashboard_connected_data(db = Depends(get_db), current_user: Optio
     recommended_mentors = all_mentors[:3]
     
     # 4. Recommended Investors
-    all_investors = NetworkService.get_investors(db, current_user)
+    all_investors = await NetworkService.get_investors(db, current_user)
     recommended_investors = all_investors[:3]
     
     # 5. Upcoming Funding Deadlines
     from backend.services.funding_service import FundingService
-    schemes = FundingService.get_schemes(db)
+    schemes = await FundingService.get_schemes(db, current_user)
     upcoming_deadlines = []
     for s in schemes:
         deadline_str = getattr(s, "deadline", "Rolling") or "Rolling"

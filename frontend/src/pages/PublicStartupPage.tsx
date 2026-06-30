@@ -170,7 +170,7 @@ export default function PublicStartupPage() {
         {/* Founder Bio */}
         <div style={{ padding: '1rem 1.25rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '12px' }}>
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>FOUNDER PROFILE</span>
-          <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: '#fff', marginTop: '0.15rem' }}>{profile.founderName}</h4>
+          <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.15rem' }}>{profile.founderName}</h4>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Interested in joining our team or co-investing? Feel free to reach out to the founder directly.</p>
         </div>
 
@@ -187,7 +187,7 @@ export default function PublicStartupPage() {
               {opps.map((opp) => (
                 <div key={opp.id} style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '10px' }}>
                   <div className="flex-between">
-                    <h4 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{opp.title}</h4>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{opp.title}</h4>
                     <span className="badge badge-secondary">{opp.roleType}</span>
                   </div>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.5rem', lineHeight: 1.4 }}>

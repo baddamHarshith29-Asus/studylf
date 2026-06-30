@@ -6,7 +6,7 @@ from backend.core.logger import logger
 
 class AIManager:
     def __init__(self):
-        self.unhealthy_providers = set()
+        self.unhealthy_providers = {}  # provider_name -> fail_timestamp
 
     @staticmethod
     def _get_db():
@@ -45,10 +45,15 @@ class AIManager:
         ]
         
         last_error = None
+        current_time = time.time()
         
         for priority_type, provider_name in priority_list:
             if provider_name in self.unhealthy_providers:
-                continue
+                fail_time = self.unhealthy_providers[provider_name]
+                if current_time - fail_time < 60:
+                    continue
+                else:
+                    logger.info(f"Cooldown ended for AI Provider '{provider_name}'. Retrying...")
                 
             provider = ProviderFactory.get_provider(provider_name)
             
@@ -66,12 +71,21 @@ class AIManager:
                     is_fallback=is_fallback
                 )
                 
+                # Recover health status on success
+                if provider_name in self.unhealthy_providers:
+                    self.unhealthy_providers.pop(provider_name, None)
+                    logger.info(f"AI Provider '{provider_name}' recovered and is now marked healthy.")
+                
+                # Robustly strip think tags (reasoning thoughts) if present
+                import re
+                response_text = re.sub(r"<think>.*?</think>", "", response_text, flags=re.DOTALL).strip()
+                
                 return response_text
             except Exception as e:
                 duration = time.time() - t0
                 last_error = e
                 logger.error(f"AI Provider '{provider_name}' ({priority_type}) failed. Error: {e}")
-                self.unhealthy_providers.add(provider_name)
+                self.unhealthy_providers[provider_name] = time.time()
                 logger.warning(f"Marked provider '{provider_name}' as unhealthy. Circuit breaker active.")
                 
                 # Failure! Update metrics

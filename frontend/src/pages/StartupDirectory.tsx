@@ -97,7 +97,7 @@ export default function StartupDirectory() {
         {/* Public visibility toggle card */}
         <div className="glass-card" style={{ padding: '0.85rem 1.25rem', border: '1px solid var(--border-glow)', display: 'flex', alignItems: 'center', gap: '1.25rem', background: 'rgba(6, 182, 212, 0.03)' }}>
           <div>
-            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: '#fff', display: 'block' }}>Directory Visibility</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-primary)', display: 'block' }}>Directory Visibility</span>
             <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>Showcase my company profile publicly</span>
           </div>
           <button 
@@ -200,7 +200,7 @@ export default function StartupDirectory() {
                   style={{ width: '42px', height: '42px', borderRadius: '10px', objectFit: 'cover' }}
                 />
                 <div>
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                     {s.startupName}
                     {s.startupName === profile.startupName && (
                       <span className="badge badge-secondary" style={{ marginLeft: '6px', fontSize: '0.6rem', padding: '0.1rem 0.3rem' }}>Mine</span>

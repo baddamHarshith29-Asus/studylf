@@ -1,30 +1,293 @@
 DEFAULT_ROADMAP_TASKS = {
     'Idea': [
-        {'text': 'Document 3 critical customer pain points', 'category': 'Validation', 'guide_id': 'r-4'},
-        {'text': 'Perform 10 user discovery interviews', 'category': 'Validation', 'guide_id': 'r-4'},
-        {'text': 'Define startup one-liner and core value proposition', 'category': 'Pitching', 'guide_id': 'r-2'},
-        {'text': 'Perform AI validation scan', 'category': 'Validation', 'guide_id': 'r-4'}
+        {
+            'text': 'Define startup one-liner and core value proposition',
+            'category': 'Pitching',
+            'guide_id': 'r-2',
+            'week': 1,
+            'description': 'Construct a clear, concise elevator pitch that outlines exactly what you are building, who your target customer is, and your unique value proposition.'
+        },
+        {
+            'text': 'Document 3 critical customer pain points',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 1,
+            'description': 'List the top three real-world frustrations faced by your target segment. These must represent high-frequency problems that users are eager to solve.'
+        },
+        {
+            'text': 'Draft customer discovery interview script',
+            'category': 'Validation',
+            'guide_id': 'r-6',
+            'week': 2,
+            'description': 'Formulate open-ended questions designed to uncover user behaviors, past spending, and daily workflows, rather than asking for speculative feature validation.'
+        },
+        {
+            'text': 'Perform 10 user discovery interviews',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 2,
+            'description': 'Schedule and conduct calls or meetings with 10 real individuals who fit your buyer persona. Take detailed notes on how they currently solve the problem.'
+        },
+        {
+            'text': 'Conduct competitive landscape mapping',
+            'category': 'Research',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Identify at least 3 direct and 3 indirect competitors. Map their core offerings, market positioning, pricing tiers, and identify where your startup has a gap opportunity.'
+        },
+        {
+            'text': 'Calculate bottom-up TAM/SAM market size',
+            'category': 'Finance',
+            'guide_id': 'r-3',
+            'week': 3,
+            'description': 'Determine your Total Addressable Market (TAM) and Serviceable Addressable Market (SAM) based on target customer volume and estimated annual transaction value.'
+        },
+        {
+            'text': 'Run Studlyf AI Validation Scan',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Submit your startup concept, customer segment, and industry parameters to the AI Validation tool. Analyze the generated report for demand feasibility.'
+        },
+        {
+            'text': 'Compile final validation scorecard',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Synthesize validation ratings across demand, scalability, and revenue potential. Determine if you should pivot details or proceed to the Validation Stage.'
+        }
     ],
     'Validation': [
-        {'text': 'Design landing page mockup', 'category': 'MVP', 'guide_id': 'r-2'},
-        {'text': 'Collect 100 email signups on waitlist', 'category': 'Growth', 'guide_id': 'r-4'},
-        {'text': 'Conduct competitive pricing analysis', 'category': 'Finance', 'guide_id': 'r-3'},
-        {'text': 'Create draft pitch outline', 'category': 'Pitching', 'guide_id': 'r-2'}
+        {
+            'text': 'Draft website landing page structure and copy',
+            'category': 'MVP',
+            'guide_id': 'r-2',
+            'week': 1,
+            'description': 'Write engaging website headers, copy, and Call-to-Actions (CTAs) that clearly communicate the value of your startup and prompt visitors to sign up.'
+        },
+        {
+            'text': 'Set up waitlist page on Carrd / Vercel',
+            'category': 'MVP',
+            'guide_id': 'r-2',
+            'week': 1,
+            'description': 'Launch a clean, single-page website featuring a clear email input form. Use a glassmorphism theme and embed waitlist tracking fields.'
+        },
+        {
+            'text': 'Set up simple web analytics tracking',
+            'category': 'Infrastructure',
+            'guide_id': 'r-4',
+            'week': 2,
+            'description': 'Integrate analytics script (like Google Analytics, Plausible, or Mixpanel) on your landing page to track page views, bounce rates, and signup button conversions.'
+        },
+        {
+            'text': 'Launch waitlist page and drive first 50 visitors',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 2,
+            'description': 'Share your waitlist link across early personal channels, relevant Slack communities, or direct messages to acquire initial landing page traffic.'
+        },
+        {
+            'text': 'Collect 100 email signups on waitlist',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Acquire 100 verified email signups on your waitlist to prove substantial demand index before investing engineering hours in the codebase.'
+        },
+        {
+            'text': 'Publish product concept on LinkedIn or Twitter',
+            'category': 'Growth',
+            'guide_id': 'r-2',
+            'week': 3,
+            'description': 'Write a comprehensive post detailing the startup problem and your proposed waitlist solution. Tag industry voices to build public traction.'
+        },
+        {
+            'text': 'Conduct competitive pricing analysis',
+            'category': 'Finance',
+            'guide_id': 'r-3',
+            'week': 4,
+            'description': 'Compare competitor monetization models (subscriptions, usage rates, freemium) and finalize your startup\'s initial pricing tiers and payment strategy.'
+        },
+        {
+            'text': 'Refine core features list for MVP',
+            'category': 'MVP',
+            'guide_id': 'r-1',
+            'week': 4,
+            'description': 'Review feedback from waitlist subscribers. Narrow down the product scope to only the absolute essential features required to deliver value.'
+        }
     ],
     'MVP': [
-        {'text': 'Build functional core features (MVP)', 'category': 'MVP', 'guide_id': 'r-1'},
-        {'text': 'Deploy to cloud hosting (AWS / Vercel)', 'category': 'Infrastructure', 'guide_id': 'r-4'},
-        {'text': 'Obtain feedback from 5 active beta testers', 'category': 'Validation', 'guide_id': 'r-4'}
+        {
+            'text': 'Select development frameworks and databases',
+            'category': 'Infrastructure',
+            'guide_id': 'r-1',
+            'week': 1,
+            'description': 'Determine the ideal technology stack (e.g., React, FastAPI, Node, MongoDB) that allows your team to build and iterate quickly without lock-ins.'
+        },
+        {
+            'text': 'Draw basic component and DB schema diagrams',
+            'category': 'Infrastructure',
+            'guide_id': 'r-1',
+            'week': 1,
+            'description': 'Map out the core page components and document database collections or schemas to avoid structural errors during the coding phase.'
+        },
+        {
+            'text': 'Build functional core features (MVP)',
+            'category': 'MVP',
+            'guide_id': 'r-1',
+            'week': 2,
+            'description': 'Develop the core interactive workspace flow where users log in and complete the main value transaction of the product.'
+        },
+        {
+            'text': 'Set up user authentication',
+            'category': 'Infrastructure',
+            'guide_id': 'r-1',
+            'week': 2,
+            'description': 'Integrate a secure, lightweight login flow (Firebase Auth, Supabase Auth, or JWT) to protect user accounts and custom profile data.'
+        },
+        {
+            'text': 'Deploy application code to Vercel or Render',
+            'category': 'Infrastructure',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Set up CI/CD pipeline linked to your repository and deploy the frontend/backend to live URL endpoints for user testing.'
+        },
+        {
+            'text': 'Set up production database service',
+            'category': 'Infrastructure',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Provision a cloud database instance (MongoDB Atlas or Supabase) and configure production environment variables in your hosting settings.'
+        },
+        {
+            'text': 'Onboard 5 active beta testers',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Give 5 users from your waitlist access to the MVP. Record screen sessions or observe them using the product to find usability friction.'
+        },
+        {
+            'text': 'Document bugs and feedback in a backlog',
+            'category': 'Validation',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Collect feedback, prioritize bug fixes and feature enhancements, and outline the next product iteration sprint.'
+        }
     ],
     'Revenue': [
-        {'text': 'Set up Stripe payment flows', 'category': 'Finance', 'guide_id': 'r-3'},
-        {'text': 'Close first 5 paid customers', 'category': 'Growth', 'guide_id': 'r-4'},
-        {'text': 'Launch on Product Hunt', 'category': 'Growth', 'guide_id': 'r-2'}
+        {
+            'text': 'Set up Stripe or payment gateway keys',
+            'category': 'Finance',
+            'guide_id': 'r-3',
+            'week': 1,
+            'description': 'Register on Stripe or Razorpay, pass verification audits, and connect sandbox keys to test end-to-end payment flows.'
+        },
+        {
+            'text': 'Add pricing page to the frontend app',
+            'category': 'Finance',
+            'guide_id': 'r-3',
+            'week': 1,
+            'description': 'Build a responsive pricing grid showing monthly/annual options, and hook up checkout buttons to initiate Stripe checkout sessions.'
+        },
+        {
+            'text': 'Schedule and launch on Product Hunt',
+            'category': 'Growth',
+            'guide_id': 'r-2',
+            'week': 2,
+            'description': 'Create product assets, write short descriptions, configure scheduler tools, and launch on Product Hunt to gain global eyeballs.'
+        },
+        {
+            'text': 'Send launch announcement to waitlist',
+            'category': 'Growth',
+            'guide_id': 'r-2',
+            'week': 2,
+            'description': 'Blast a customized launch newsletter to your accumulated waitlist contacts, offering limited-time early adopter discount codes.'
+        },
+        {
+            'text': 'Reach out directly to 20 warm leads',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Reach out to high-priority waitlist signups or previous discovery contacts. Schedule demos to close deals individually.'
+        },
+        {
+            'text': 'Close first 2 paid customers',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 3,
+            'description': 'Secure your first paid conversions to prove validation via real monetary value transaction.'
+        },
+        {
+            'text': 'Establish customer success channel',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Set up shared helpdesks or customer chat widgets (Intercom, Crisp) to solve user onboarding problems in real-time.'
+        },
+        {
+            'text': 'Close 5 paid customers total',
+            'category': 'Growth',
+            'guide_id': 'r-4',
+            'week': 4,
+            'description': 'Standardize onboarding guides and convert at least 5 customers total to confirm consistent customer acquisition loops.'
+        }
     ],
     'Fundraising': [
-        {'text': 'Incorporate company and sign SHA', 'category': 'Legal', 'guide_id': 'r-1'},
-        {'text': 'Construct complete pitch room and financial model', 'category': 'Pitching', 'guide_id': 'r-3'},
-        {'text': 'Begin cold reachout to matching VCs', 'category': 'Funding', 'guide_id': 'r-2'}
+        {
+            'text': 'Incorporate company as Pvt Ltd / LLP',
+            'category': 'Legal',
+            'guide_id': 'r-1',
+            'week': 1,
+            'description': 'Register your startup legally with MCA in India (or equivalent registration bodies). Keep ownership stakes and structures official.'
+        },
+        {
+            'text': 'Draft and sign Co-founder SHA',
+            'category': 'Legal',
+            'guide_id': 'r-1',
+            'week': 1,
+            'description': 'Formulate and execute a legally-binding Shareholders Agreement (SHA) detailing equity splits, vesting periods, and IP assignment clauses.'
+        },
+        {
+            'text': 'Draft the 10-slide pitch outline',
+            'category': 'Pitching',
+            'guide_id': 'r-2',
+            'week': 2,
+            'description': 'Outline the core slides of your pitch: Problem, Solution, Product, Market Size, Business Model, Traction, Competition, and Team.'
+        },
+        {
+            'text': 'Fill and customize Sequoia Pitch Storyboard',
+            'category': 'Pitching',
+            'guide_id': 'r-2',
+            'week': 2,
+            'description': 'Utilize the interactive Sequoia storyboard builder in Studlyf to refine your slide narratives based on AI-guided suggestions.'
+        },
+        {
+            'text': 'Construct 3-year financial forecast model',
+            'category': 'Finance',
+            'guide_id': 'r-3',
+            'week': 3,
+            'description': 'Map out monthly headcount, COGS, marketing, and projected revenues. Maintain a clear formula mapping variables for investor review.'
+        },
+        {
+            'text': 'Set up clean shared investor data room',
+            'category': 'Pitching',
+            'guide_id': 'r-3',
+            'week': 3,
+            'description': 'Compile legal incorporation docs, pitch deck, cap table, and financial projections in a secure, shared drive (DocSend/Google Drive).'
+        },
+        {
+            'text': 'List 20 target angels or micro-VCs',
+            'category': 'Funding',
+            'guide_id': 'r-2',
+            'week': 4,
+            'description': 'Filter potential investors by sector focus, average check size, and geographic criteria. Map warm introduction paths.'
+        },
+        {
+            'text': 'Conduct cold outreach and pitch bookings',
+            'category': 'Funding',
+            'guide_id': 'r-2',
+            'week': 4,
+            'description': 'Send customized, metric-forward pitch emails to your list. Aim to book meetings and generate early momentum for the funding round.'
+        }
     ]
 }
 

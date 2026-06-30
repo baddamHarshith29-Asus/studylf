@@ -1,0 +1,242 @@
+STUDLYF — Feature SpeciﬁcaƟon for Development 
+Developer reference document — full feature set, explained 
+ 
+How to read this document 
+This covers every feature in the original Studlyf vision, explained in plain language, with what the 
+founder inputs, what the system needs to output, a suggested technical approach, and at least one 
+reference website to study for inspiraƟon. It's meant to sit alongside the rescoped lean v1 PRD 
+shared earlier — that document deﬁnes build order (Funding Navigator, Roadmap, and AI Copilot 
+ship ﬁrst); this document is the full reference so the whole team understands where everything else 
+ﬁts and why, before it gets built. 
+A note on the reference sites throughout: they're there to study UI paƩerns, data structure, and 
+posiƟoning — not to scrape or copy. Several (Crunchbase, Tracxn, OpenVC) hold their own 
+proprietary datasets; Studlyf's data needs to be sourced independently, as detailed feature by 
+feature below. 
+ 
+0. Onboarding: Account & Startup Proﬁle CreaƟon 
+What it does: Gets a founder from "never heard of Studlyf" to "has a generated dashboard" in two 
+short steps. 
+Step 1 — Create Account: Google login or email login, with opƟonal LinkedIn import or resume 
+upload to pre-ﬁll proﬁle ﬁelds. 
+Step 2 — Create Startup Proﬁle: Founder enters startup name, descripƟon, industry, country, and 
+selects a stage (Idea, ValidaƟon, MVP, Revenue, Fundraising). 
+ 
+Feature 1 — AI Startup ValidaƟon 
+What it does: Helps a founder ﬁgure out whether their idea is actually worth pursuing, before they 
+spend months building it. 
+Founder inputs: Startup idea, problem statement, customer segment, geography. 
+System outputs: 
+ 
+Market research: market size, growth trends, industry overview 
+ 
+CompeƟtor discovery: direct and indirect compeƟtors, funding history, pricing 
+ 
+Customer persona: ideal customer proﬁle, pain points, behavior 
+ 
+ValidaƟon score (0–100), broken into demand, compeƟƟon, scalability, and revenue potenƟal 
+sub-scores 
+Suggested approach: Market research and compeƟtor discovery need to be current, so this should 
+be built on an LLM with live web search/retrieval grounding rather than a staƟc internal database — 
+markets move too fast for a one-Ɵme-built dataset to stay accurate. The validaƟon score should 
+always be shown with its four sub-scores visible, never just the single 0–100 number; a single 
+number with no visible basis is the kind of thing sophisƟcated founders (and investors looking over 
+their shoulder) will distrust immediately. 
+Reference sites: Crunchbase for how compeƟtor and funding-history data is structured and 
+displayed. 
+ 
+Feature 2 — Founder Roadmap ("Founder GPS") 
+What it does: Tells founders exactly what to do next, week by week, based on their current stage. 
+This is the most important feature in the whole product — it's the literal "GPS" in the posiƟoning. 
+Founder input: Current stage (e.g., Idea Stage). 
+System output: A week-by-week task list (e.g., Week 1: conduct 20 interviews; Week 2: build a 
+landing page; Week 3: collect feedback; Week 4: create MVP), with each task linked to templates, 
+guides, and resources. 
+Suggested approach: Build this as a curated content library ﬁrst — a structured set of stage-speciﬁc 
+playbooks wriƩen and veƩed by the team, stored as structured data (a CMS or simple database 
+table), not generated fresh by an AI each Ɵme. VeƩed, evergreen content is more trustworthy than 
+freshly-generated text for something this central, and it's far easier to keep consistent. AI can be 
+layered in later to personalize sequencing or ordering based on the founder's sector and signals, 
+once the base content exists. 
+Reference sites: Founder InsƟtute for the structured curriculum/playbook model; NoƟon for the 
+task-and-template UI paƩern (checklists, linked documents, progress tracking). 
+ 
+Feature 3 — AI Build Advisor 
+What it does: Helps founders ﬁgure out what to actually build — tech stack, build phases, and rough 
+costs. 
+Founder input: Startup type (SaaS, AI Startup, Marketplace, Mobile App). 
+System output: Recommended stack (frontend, backend, database, hosƟng, AI provider), a phased 
+development roadmap (MVP, Growth Features, Scale Features), and a cost esƟmator (development, 
+hosƟng, AI costs). 
+Suggested approach: This can be a straighƞorward rules-based recommendaƟon engine (a decision 
+tree keyed on startup type) rather than something needing fresh AI generaƟon each Ɵme — stack 
+recommendaƟons don't need to be novel. The cost esƟmator should pull from real, current pricing 
+(actual hosƟng and API pricing pages) rather than staƟc guessed ﬁgures, since those numbers 
+change. 
+Reference sites: Lovable, v0, and Bolt. Worth being honest internally about this one: these three 
+already do AI-assisted app generaƟon extremely well, and Lovable in parƟcular has become a major, 
+well-funded player. A staƟc stack-recommendaƟon feature next to those is thin. Consider scoping this 
+as a lightweight advisor that helps a non-technical founder understand which of those tools ﬁts their 
+situaƟon and why, rather than trying to rebuild what they already do. 
+ 
+Feature 4 — Funding Navigator 
+What it does: Helps founders discover the funding opportuniƟes that actually ﬁt them — incubators, 
+accelerators, government programs, grants, fellowships. 
+Founder inputs: Sector, stage, geography. 
+System outputs: Relevant matches across each category, an eligibility indicator, and an applicaƟon 
+tracker (Applied / Under Review / Accepted / Rejected). 
+Suggested approach: This needs to be a manually curated, veriﬁed database — structured ﬁelds per 
+program (stage range, sector tags, geography, deadline, equity terms, applicaƟon link, last-veriﬁed 
+date) — not a scrape of a third-party site. Show eligibility as a transparent breakdown (which speciﬁc 
+criteria the founder meets, which they don't) rather than a single fabricated percentage like "90% 
+eligible," which implies a level of conﬁdence the system can't actually have without real historical 
+acceptance data. The applicaƟon tracker is a simple status ﬁeld Ɵed to the founder's account, 
+updated by the founder themselves iniƟally. 
+Reference sites: Startup India for how scheme structure and eligibility criteria are typically organized; 
+OpenVC for how a funding-discovery-plus-tracking interface can be laid out (note: OpenVC already 
+publishes a large free database of investors and accelerators — study the UX, but Studlyf's actual 
+data sƟll needs to be built independently and veriﬁed, especially for India-speciﬁc government 
+schemes that a global tool won't cover well). 
+ 
+Feature 5 — Investor Discovery 
+What it does: Helps founders idenƟfy investors that actually ﬁt their industry, stage, and revenue 
+proﬁle. 
+Founder inputs: Industry, stage, revenue. 
+System outputs: Investor name, stage preference, geography, focus areas; a fundraising readiness 
+score across team, product, market, and tracƟon. 
+Suggested approach: Be aware going in that this category already has strong, well-resourced 
+incumbents with large exisƟng datasets. Rather than building a proprietary investor database from 
+scratch immediately, consider a partnership or licensed-data approach for the iniƟal version, and 
+reserve in-house data-building eﬀort for the areas (like India-speciﬁc grants) where the market is 
+genuinely underserved. 
+Reference sites: Tracxn, Crunchbase, and OpenVC — all three already do this well; study what they 
+don't cover (especially India-speciﬁc early-stage angel and micro-VC data) for a possible wedge. 
+ 
+Feature 6 — Mentor Discovery 
+What it does: Helps founders ﬁnd mentors relevant to their industry, stage, and geography. 
+Filter criteria: Industry, startup stage, geography. 
+System output: Mentor proﬁle showing experƟse, startup experience, and availability. 
+Suggested approach: Start as a curated, manually-onboarded directory rather than an automated 
+matching algorithm — match quality here depends enƟrely on how deep and accurate the mentor 
+data is, which needs human curaƟon, especially early on. Mentors are also a natural thing to source 
+through incubator and accelerator partnerships rather than building cold. 
+Reference sites: Founder InsƟtute for its mentor program structure (experƟse tagging, availability, 
+matching model). 
+ 
+Feature 7 — RelaƟonship Intelligence 
+What it does: IdenƟﬁes people a founder should talk to next — potenƟal customers, investors, 
+mentors, other founders — and shows a path to a warm introducƟon through mutual contacts. 
+Founder inputs: Resume, contact list, LinkedIn export. 
+System output: A list of relevant people to connect with, and a visualized introducƟon path (Founder 
+→ Mutual Contact → Investor). 
+Important build note before any code is wriƩen: Do not build this on scraped LinkedIn data. 
+LinkedIn's user agreement explicitly prohibits automated scraping of proﬁle data, and enforcement 
+has been acƟve and escalaƟng — including liƟgaƟon where the requested remedy covered not just 
+the scraped data itself but anything inferred, aggregated, or synthesized from it. That means even a 
+derived "introducƟon path" graph built on top of scraped proﬁles carries real legal exposure, not just 
+the raw scrape. Build this instead on data the founder explicitly owns and uploads with consent 
+(their own exported contacts, a CSV they control) and on mutual-introducƟon requests where both 
+sides opt in — never on inferring a path through someone else's network without their knowledge. 
+Get legal review (India's DPDP Act and any other relevant jurisdicƟon) before development starts on 
+this feature speciﬁcally. 
+Reference sites: Clay and Common Room for relaƟonship-mapping UI paƩerns — but study their 
+compliant, consent-based data-sourcing approach as closely as their interface, since that's the part 
+that actually maƩers here. 
+ 
+Feature 8 — Opportunity Radar 
+What it does: Keeps founders passively informed about what's happening in the ecosystem — 
+trending sectors, new grants, new accelerators and incubators, innovaƟon challenges, startup 
+compeƟƟons. 
+System output: A feed of trending sectors (e.g., AI, Healthcare, Defence, Manufacturing, Climate 
+Tech), new funding programs, and compeƟƟons. 
+Suggested approach: This is largely a byproduct of Feature 4 once that database exists — new or 
+updated entries in the Funding Navigator dataset naturally become radar items. Layer in a 
+lightweight editorial/news component for sector trends and compeƟƟons on top of that same data 
+store, rather than building a separate system. 
+Reference sites: Product Hunt for feed and launch-card UI paƩerns; YourStory for India-speciﬁc 
+startup news tone and structure. 
+ 
+Feature 9 — AI Founder Copilot 
+What it does: A conversaƟonal AI startup advisor founders can ask anything — "How do I get my ﬁrst 
+100 users?", "Which incubator should I apply to?" — posiƟoned as the homepage search experience. 
+Suggested approach: Build this as an LLM-based chat interface grounded primarily in Studlyf's own 
+veriﬁed internal data (Funding Navigator entries, Roadmap content, Resources Library) through 
+retrieval, so that speciﬁc factual quesƟons — "Am I eligible for X grant?" — pull from veriﬁed, 
+sourced answers rather than the model's general knowledge. Broader advice quesƟons (pricing 
+strategy, growth tacƟcs) can draw on the model's general knowledge, but should be visibly 
+disƟnguished from sourced, database-backed answers so founders know which kind of answer 
+they're geƫng. 
+Suggested approach for reference UX: look at any modern retrieval-grounded AI chat product for the 
+"answer plus visible source" display paƩern — the key UX principle is that the founder should be able 
+to tell, at a glance, whether an answer comes from Studlyf's veriﬁed database or from general AI 
+knowledge. 
+Build note: Per the lean v1 PRD, this should funcƟon as the actual front door of the product — the 
+homepage — not a deep separate feature buried in navigaƟon. 
+ 
+Feature 10 — Startup Resources Library 
+What it does: A library of pracƟcal templates and guides — legal templates, pitch deck templates, 
+founder guides, grant applicaƟon templates, ﬁnancial models. 
+Suggested approach: A structured, versioned content library (a simple CMS) that can launch with a 
+small, genuinely useful curated set rather than trying to be exhausƟve on day one. Quality and 
+accuracy maƩer more than volume here. 
+Reference sites: Y Combinator's Startup Library for content organizaƟon, tone, and depth. 
+Build note: Anything India-speciﬁc in the legal template category (incorporaƟon documents, cap 
+table templates, employment agreements) should be reviewed by an actual lawyer before 
+publishing. A generic AI-generated legal template that a founder relies on and that turns out to be 
+wrong is a real liability, not just a quality issue. 
+ 
+Feature 11 — Founder Proﬁle 
+What it does: A founder's personal record — startup progress, validaƟon reports, funding 
+applicaƟons, roadmap progress, and AI conversaƟon history. 
+Suggested approach: This is purely an aggregaƟon and presentaƟon layer over data already 
+generated by the other features — no new data source is needed. It's essenƟally an account 
+dashboard. 
+Reference sites: No external product needed for inspiraƟon here beyond a clean SaaS 
+account/seƫngs page paƩern; this is the lowest-risk, lowest-priority feature to build, since it has no 
+dependency on external data. 
+ 
+Feature 12 — Startup Proﬁle 
+What it does: A startup-level record — team details, industry, stage, validaƟon reports, funding 
+status. 
+Suggested approach: Same as Founder Proﬁle — an internal aggregaƟon layer. If the business model 
+evolves toward partnering with incubators (selling them a view into applicant startup proﬁles), this 
+page could later become the basis for a partner-facing dashboard — worth keeping that possibility in 
+mind in the data model, even if the UI stays private-only at ﬁrst. 
+Reference sites: Crunchbase company proﬁle pages, as a layout reference for how a structured 
+startup proﬁle can be organized. 
+Build note: Keep this private by default. Only make any part of it public or partner-visible for a clear, 
+speciﬁc reason, since startup and founder data carries its own privacy consideraƟons. 
+ 
+Admin Panel 
+What it does: Lets the internal team manage founders, startups, investors, grants, incubators, 
+mentors, AI prompts, and the opportunity feed. 
+Suggested approach: This is purely operaƟonal tooling, not user-facing — there's liƩle reason to 
+build it bespoke from scratch. An oﬀ-the-shelf internal admin tool builder (e.g., Retool) or a standard 
+framework admin panel can get this running fast, leaving engineering Ɵme for the user-facing 
+product. 
+Reference sites: Retool as an example of how internal admin tooling is typically assembled quickly. 
+Build note: This is the tool the ops team will use daily to keep the Funding Navigator data fresh and 
+accurate — it's worth prioriƟzing right alongside Feature 4, not aŌer it, since the data-quality plan 
+depends on it. 
+ 
+NavigaƟon & InformaƟon Architecture 
+The product is constrained to ﬁve primary navigaƟon items: Dashboard, Roadmap, Funding, 
+Network, AI Copilot. Here's a suggested mapping of the twelve features into that structure: 
+ 
+Dashboard → AI Founder Dashboard (Startup Health Score, ValidaƟon Status, Recommended 
+AcƟons), Founder Proﬁle (Feature 11), Startup Proﬁle (Feature 12) 
+ 
+Roadmap → Founder Roadmap (Feature 2), with Resources Library (Feature 10) surfaced 
+contextually inside roadmap tasks as linked templates and guides 
+ 
+Funding → Funding Navigator (Feature 4), with Opportunity Radar (Feature 8) as a feed 
+within the same secƟon 
+ 
+Network → Investor Discovery (Feature 5), Mentor Discovery (Feature 6), and RelaƟonship 
+Intelligence (Feature 7), as tabs within one secƟon 
+ 
+AI Copilot → Feature 9, also reachable as a persistent search/chat entry point from every 
+other screen 
+AI Startup ValidaƟon (Feature 1) and AI Build Advisor (Feature 3) don't need their own nav slots — 
+they ﬁt naturally as acƟons launched from the Dashboard or Roadmap (e.g., a "Validate my idea" or 
+"Get a build plan" acƟon card), keeping the ﬁve-item navigaƟon rule intact. 
+ 

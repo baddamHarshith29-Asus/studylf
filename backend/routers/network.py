@@ -9,12 +9,24 @@ from backend.services.network_service import NetworkService
 router = APIRouter()
 
 @router.get("/network/investors", response_model=List[InvestorResponse])
-def get_investors(db = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
-    return NetworkService.get_investors(db, current_user)
+async def get_investors(
+    industry: Optional[str] = None,
+    stage: Optional[str] = None,
+    revenue: Optional[str] = None,
+    db = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
+):
+    return await NetworkService.get_investors(db, current_user, industry=industry, stage=stage, revenue=revenue)
 
 @router.get("/network/mentors", response_model=List[MentorResponse])
-def get_mentors(db = Depends(get_db), current_user: Optional[User] = Depends(get_current_user_optional)):
-    return NetworkService.get_mentors(db, current_user)
+def get_mentors(
+    industry: Optional[str] = None,
+    stage: Optional[str] = None,
+    geography: Optional[str] = None,
+    db = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
+):
+    return NetworkService.get_mentors(db, current_user, industry=industry, stage=stage, geography=geography)
 
 @router.post("/network/relationship-path", response_model=RelationshipPathResponse)
 def get_relationship_path(data: RelationshipPathRequest, current_user: Optional[User] = Depends(get_current_user_optional)):

@@ -83,6 +83,40 @@ def seed_initial_data():
             })
             logger.info("Successfully seeded admin user and profile.")
 
+        # Self-healing: Repair/Update Ollama model setting if it is set to the missing qwen3 model or is not set
+        try:
+            ollama_doc = db.settings.find_one({"setting_name": "ollama_model"})
+            if not ollama_doc or ollama_doc.get("value") != "qwen":
+                logger.info("Self-healing: updating configured Ollama model setting to 'qwen'...")
+                db.settings.update_one(
+                    {"setting_name": "ollama_model"},
+                    {"$set": {"value": "qwen"}},
+                    upsert=True
+                )
+        except Exception as seeder_err:
+            logger.warning(f"Failed to auto-repair Ollama model settings: {seeder_err}")
+
+        # Self-healing: Make sure primary is groq, secondary is gemini, fallback is ollama
+        try:
+            db.settings.update_one(
+                {"setting_name": "primary_ai_provider"},
+                {"$set": {"value": "groq"}},
+                upsert=True
+            )
+            db.settings.update_one(
+                {"setting_name": "secondary_ai_provider"},
+                {"$set": {"value": "gemini"}},
+                upsert=True
+            )
+            db.settings.update_one(
+                {"setting_name": "fallback_ai_provider"},
+                {"$set": {"value": "ollama"}},
+                upsert=True
+            )
+            logger.info("Self-healing: updated default AI provider priority configurations (Groq -> Gemini -> Ollama).")
+        except Exception as seeder_err:
+            logger.warning(f"Failed to auto-repair AI provider settings: {seeder_err}")
+
         # 1. Seed Funding Schemes
         if db.funding_schemes.count_documents({}) == 0:
             logger.info("Seeding default funding schemes...")

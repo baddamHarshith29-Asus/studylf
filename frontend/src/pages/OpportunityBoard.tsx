@@ -19,14 +19,30 @@ interface Opportunity {
   createdAt: string;
 }
 
+interface RadarItem {
+  id: string;
+  title: string;
+  type: string;
+  desc: string;
+  date: string;
+  tag: string;
+}
+
 export default function OpportunityBoard() {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const [opps, setOpps] = useState<Opportunity[]>([]);
+  const [radarItems, setRadarItems] = useState<RadarItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [votes, setVotes] = useState<Record<string, number>>({});
   const [hasVoted, setHasVoted] = useState<string[]>([]);
+  
+  // Radar upvotes
+  const [radarVotes, setRadarVotes] = useState<Record<string, number>>({});
+  const [radarHasVoted, setRadarHasVoted] = useState<string[]>([]);
+
+  const [activeSubTab, setActiveSubTab] = useState<'radar' | 'collaborators'>('radar');
 
   useEffect(() => {
     if (opps.length > 0) {
@@ -39,6 +55,17 @@ export default function OpportunityBoard() {
     }
   }, [opps]);
 
+  useEffect(() => {
+    if (radarItems.length > 0) {
+      const initialRadarVotes: Record<string, number> = {};
+      radarItems.forEach(item => {
+        const seed = item.title.length + item.type.length;
+        initialRadarVotes[item.id] = (seed % 15) + 12;
+      });
+      setRadarVotes(initialRadarVotes);
+    }
+  }, [radarItems]);
+
   const handleUpvote = (id: string) => {
     if (hasVoted.includes(id)) {
       setHasVoted(prev => prev.filter(vid => vid !== id));
@@ -49,6 +76,18 @@ export default function OpportunityBoard() {
       showToast('Opportunity upvoted! Increasing ecosystem visibility.', 'success');
     }
   };
+
+  const handleRadarUpvote = (id: string) => {
+    if (radarHasVoted.includes(id)) {
+      setRadarHasVoted(prev => prev.filter(vid => vid !== id));
+      setRadarVotes(prev => ({ ...prev, [id]: prev[id] - 1 }));
+    } else {
+      setRadarHasVoted(prev => [...prev, id]);
+      setRadarVotes(prev => ({ ...prev, [id]: prev[id] + 1 }));
+      showToast('Ecosystem radar upvoted! Pinning to top trends.', 'success');
+    }
+  };
+
   const [activeCategory, setActiveCategory] = useState<string>('All');
   
   // Application State
@@ -57,15 +96,21 @@ export default function OpportunityBoard() {
   const [applyLoading, setApplyLoading] = useState(false);
 
   useEffect(() => {
-    fetchOpportunities();
+    fetchRadarAndOpportunities();
   }, []);
 
-  const fetchOpportunities = async () => {
+  const fetchRadarAndOpportunities = async () => {
     setLoading(true);
     try {
-      const response = await apiFetch('/api/opportunities/list');
-      if (response.ok) {
-        setOpps(await response.json());
+      const [oppsRes, radarRes] = await Promise.all([
+        apiFetch('/api/opportunities/list'),
+        apiFetch('/api/radar')
+      ]);
+      if (oppsRes.ok) {
+        setOpps(await oppsRes.json());
+      }
+      if (radarRes.ok) {
+        setRadarItems(await radarRes.json());
       }
     } catch (err) {
       console.error(err);
@@ -103,6 +148,15 @@ export default function OpportunityBoard() {
 
   const categories = ['All', 'Team Member', 'Mentor', 'Collaborator', 'Investor'];
 
+  const filteredRadar = radarItems.filter((item) => {
+    return (
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.desc.toLowerCase().includes(search.toLowerCase()) ||
+      item.type.toLowerCase().includes(search.toLowerCase()) ||
+      item.tag.toLowerCase().includes(search.toLowerCase())
+    );
+  });
+
   const filteredOpps = opps.filter((opp) => {
     const matchesSearch = 
       opp.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -115,42 +169,56 @@ export default function OpportunityBoard() {
   });
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
       {/* Header */}
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div className="page-title-section">
-          <h2 className="gradient-text">Ecosystem Opportunity Board</h2>
-          <p>Browse open positions, co-founder requests, advisory roles, or investor matchings across active startups.</p>
+          <h2 className="gradient-text">Ecosystem Opportunity Radar</h2>
+          <p>Browse live trending startup sectors, new government grants, innovation challenges, or hire founding team members.</p>
         </div>
-        <button 
-          onClick={() => navigate('/startup-profile')} 
-          className="btn btn-outline"
-          style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
-        >
-          <Plus size={16} /> Post Opportunity
+        {activeSubTab === 'collaborators' && (
+          <button 
+            onClick={() => navigate('/startup-profile')} 
+            className="btn btn-outline"
+            style={{ display: 'flex', alignItems: 'center', gap: '4px' }}
+          >
+            <Plus size={16} /> Post Opportunity
+          </button>
+        )}
+      </div>
+
+      {/* Primary Sub Tabs */}
+      <div className="tabs-header" style={{ display: 'flex', gap: '0.25rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+        <button onClick={() => { setActiveSubTab('radar'); setSearch(''); }} className={`tab-btn ${activeSubTab === 'radar' ? 'active' : ''}`}>
+          📡 Ecosystem Radar Feed
+        </button>
+        <button onClick={() => { setActiveSubTab('collaborators'); setSearch(''); }} className={`tab-btn ${activeSubTab === 'collaborators' ? 'active' : ''}`}>
+          💼 Collaborators & Openings
         </button>
       </div>
 
-      {/* Categories Buttons */}
-      <div className="tabs-header" style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
-        {categories.map((cat) => (
-          <button 
-            key={cat} 
-            onClick={() => setActiveCategory(cat)} 
-            className={`tab-btn ${activeCategory === cat ? 'active' : ''}`}
-          >
-            {cat === 'All' ? 'All Roles' : cat}
-          </button>
-        ))}
-      </div>
+      {activeSubTab === 'collaborators' && (
+        /* Categories Buttons */
+        <div className="tabs-header" style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
+          {categories.map((cat) => (
+            <button 
+              key={cat} 
+              onClick={() => setActiveCategory(cat)} 
+              className={`tab-btn ${activeCategory === cat ? 'active' : ''}`}
+            >
+              {cat === 'All' ? 'All Roles' : cat}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Search Input */}
       <div style={{ position: 'relative' }}>
         <input 
           type="text" 
           className="form-input" 
-          placeholder="Search opportunities by role title, startup name, skills..."
+          placeholder={activeSubTab === 'radar' ? "Search news, sector trends, grants, deadlines..." : "Search opportunities by role title, startup name, skills..."}
           style={{ width: '100%', paddingLeft: '2.5rem' }}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -158,92 +226,180 @@ export default function OpportunityBoard() {
         <Search size={18} style={{ position: 'absolute', left: '12px', top: '13px', color: 'var(--text-muted)' }} />
       </div>
 
-      {/* Opportunities List */}
+      {/* Dynamic Content Display */}
       <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minHeight: '300px' }}>
         {loading ? (
           <div className="flex-center" style={{ padding: '3rem' }}>
             <div className="pulse-loader"><div className="pulse-bubble" /></div>
           </div>
-        ) : filteredOpps.length === 0 ? (
-          <div className="flex-center" style={{ flexDirection: 'column', gap: '0.5rem', padding: '3rem', color: 'var(--text-muted)' }}>
-            <Briefcase size={36} />
-            <p>No matching positions found.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {filteredOpps.map((opp) => {
-              const voteCount = votes[opp.id] || 0;
-              const isVoted = hasVoted.includes(opp.id);
-              return (
-                <div 
-                  key={opp.id} 
-                  style={{ 
-                    padding: '1.25rem', 
-                    background: 'rgba(255,255,255,0.01)', 
-                    border: '1px solid var(--border-light)', 
-                    borderRadius: '10px',
-                    display: 'flex',
-                    gap: '1.25rem',
-                    alignItems: 'center'
-                  }}
-                >
+        ) : activeSubTab === 'radar' ? (
+          /* Radar Feed Tab (YourStory news style with upvoting) */
+          filteredRadar.length === 0 ? (
+            <div className="flex-center" style={{ flexDirection: 'column', gap: '0.5rem', padding: '3rem', color: 'var(--text-muted)' }}>
+              <Briefcase size={36} />
+              <p>No matching radar updates found.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {filteredRadar.map((item) => {
+                const voteCount = radarVotes[item.id] || 0;
+                const isVoted = radarHasVoted.includes(item.id);
+
+                return (
                   <div 
-                    onClick={() => handleUpvote(opp.id)}
-                    style={{
+                    key={item.id} 
+                    style={{ 
+                      padding: '1.25rem', 
+                      background: 'rgba(255,255,255,0.01)', 
+                      border: '1px solid var(--border-light)', 
+                      borderRadius: '10px',
                       display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '46px',
-                      height: '52px',
-                      borderRadius: '8px',
-                      border: isVoted ? '1px solid var(--primary)' : '1px solid var(--border-light)',
-                      background: isVoted ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255,255,255,0.02)',
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                      transition: 'all 0.2s ease',
-                      flexShrink: 0
+                      gap: '1.25rem',
+                      alignItems: 'center'
                     }}
-                    className="upvote-btn animate-scale"
                   >
-                    <span style={{ fontSize: '0.8rem', color: isVoted ? 'var(--primary)' : 'var(--text-muted)' }}>▲</span>
-                    <span style={{ fontSize: '0.78rem', fontWeight: 'bold', color: isVoted ? 'var(--primary)' : '#fff', marginTop: '2px' }}>{voteCount}</span>
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="flex-between">
-                      <div>
-                        <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#fff', margin: 0 }}>{opp.title}</h4>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{opp.startupName} • {opp.startupStage} Stage</span>
-                      </div>
-                      <span className="badge badge-primary" style={{ fontSize: '0.65rem' }}>{opp.roleType}</span>
+                    {/* Upvote controller */}
+                    <div 
+                      onClick={() => handleRadarUpvote(item.id)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '46px',
+                        height: '52px',
+                        borderRadius: '8px',
+                        border: isVoted ? '1px solid var(--primary)' : '1px solid var(--border-light)',
+                        background: isVoted ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255,255,255,0.02)',
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        transition: 'all 0.2s ease',
+                        flexShrink: 0
+                      }}
+                      className="upvote-btn animate-scale"
+                    >
+                      <span style={{ fontSize: '0.8rem', color: isVoted ? 'var(--primary)' : 'var(--text-muted)' }}>▲</span>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 'bold', color: isVoted ? 'var(--primary)' : 'var(--text-primary)', marginTop: '2px' }}>{voteCount}</span>
                     </div>
 
-                    <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.5rem', marginBottom: '0.5rem', lineHeight: 1.4 }}>
-                      {opp.description}
-                    </p>
-                    
-                    {opp.requirements && (
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        <strong>Requirements:</strong> {opp.requirements}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="flex-between">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="badge badge-secondary" style={{ fontSize: '0.65rem' }}>{item.type}</span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{item.date}</span>
+                        </div>
+                        <span style={{ fontSize: '0.72rem', color: 'var(--secondary)' }}>#{item.tag}</span>
                       </div>
-                    )}
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.5rem' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--success)' }}>Equity Offer: {opp.equityRange}</span>
-                      <button 
-                        onClick={() => setApplyingJob(opp)} 
-                        className="btn btn-primary"
-                        style={{ padding: '0.3rem 0.75rem', fontSize: '0.72rem', borderRadius: '4px' }}
-                      >
-                        Apply for Position
-                      </button>
+                      <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '0.4rem', marginBottom: '0.4rem' }}>{item.title}</h4>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.45, margin: 0 }}>
+                        {item.desc}
+                      </p>
+                      
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.5rem' }}>
+                        <button 
+                          onClick={() => {
+                            if (item.type.toLowerCase().includes('grant')) {
+                              navigate('/funding');
+                            } else {
+                              showToast('Subscribing to updates for this sector alert!', 'success');
+                            }
+                          }}
+                          className="btn btn-outline"
+                          style={{ padding: '0.3rem 0.75rem', fontSize: '0.72rem', borderRadius: '4px' }}
+                        >
+                          {item.type.toLowerCase().includes('grant') ? 'View Grant Details' : 'Subscribe to Updates'}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )
+        ) : (
+          /* Collaborators Tab (Wellfound style Job openings) */
+          filteredOpps.length === 0 ? (
+            <div className="flex-center" style={{ flexDirection: 'column', gap: '0.5rem', padding: '3rem', color: 'var(--text-muted)' }}>
+              <Briefcase size={36} />
+              <p>No matching positions found.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {filteredOpps.map((opp) => {
+                const voteCount = votes[opp.id] || 0;
+                const isVoted = hasVoted.includes(opp.id);
+                return (
+                  <div 
+                    key={opp.id} 
+                    style={{ 
+                      padding: '1.25rem', 
+                      background: 'rgba(255,255,255,0.01)', 
+                      border: '1px solid var(--border-light)', 
+                      borderRadius: '10px',
+                      display: 'flex',
+                      gap: '1.25rem',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <div 
+                      onClick={() => handleUpvote(opp.id)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '46px',
+                        height: '52px',
+                        borderRadius: '8px',
+                        border: isVoted ? '1px solid var(--primary)' : '1px solid var(--border-light)',
+                        background: isVoted ? 'rgba(99, 102, 241, 0.08)' : 'rgba(255,255,255,0.02)',
+                        cursor: 'pointer',
+                        userSelect: 'none',
+                        transition: 'all 0.2s ease',
+                        flexShrink: 0
+                      }}
+                      className="upvote-btn animate-scale"
+                    >
+                      <span style={{ fontSize: '0.8rem', color: isVoted ? 'var(--primary)' : 'var(--text-muted)' }}>▲</span>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 'bold', color: isVoted ? 'var(--primary)' : 'var(--text-primary)', marginTop: '2px' }}>{voteCount}</span>
+                    </div>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div className="flex-between">
+                        <div>
+                          <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{opp.title}</h4>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--secondary)' }}>{opp.startupName} • {opp.startupStage} Stage</span>
+                        </div>
+                        <span className="badge badge-primary" style={{ fontSize: '0.65rem' }}>{opp.roleType}</span>
+                      </div>
+
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.5rem', marginBottom: '0.5rem', lineHeight: 1.4 }}>
+                        {opp.description}
+                      </p>
+                      
+                      {opp.requirements && (
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                          <strong>Requirements:</strong> {opp.requirements}
+                        </div>
+                      )}
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '0.5rem' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--success)' }}>Equity Offer: {opp.equityRange}</span>
+                        <button 
+                          onClick={() => setApplyingJob(opp)} 
+                          className="btn btn-primary"
+                          style={{ padding: '0.3rem 0.75rem', fontSize: '0.72rem', borderRadius: '4px' }}
+                        >
+                          Apply for Position
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )
         )}
       </div>
 

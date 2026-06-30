@@ -97,14 +97,14 @@ export default function PitchDeckReview() {
                 }}
               />
               <Upload size={32} style={{ color: 'var(--primary)', marginBottom: '0.65rem' }} />
-              <h4 style={{ fontSize: '0.9rem', color: '#fff' }}>Click or drag file here</h4>
+              <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>Click or drag file here</h4>
               <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>PDF, PPTX, or DOCX (Max 15MB)</p>
             </div>
 
             {file && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0.65rem', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', marginBottom: '1.25rem', border: '1px solid var(--border-light)' }}>
                 <FileText size={18} style={{ color: 'var(--secondary)' }} />
-                <span style={{ fontSize: '0.8rem', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{file.name}</span>
               </div>
             )}
 
@@ -137,7 +137,7 @@ export default function PitchDeckReview() {
                   {result.score}
                 </div>
                 <div>
-                  <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: '#fff' }}>Overall Readiness Grade</h4>
+                  <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-primary)' }}>Overall Readiness Grade</h4>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{result.score >= 7 ? 'Investment ready candidate' : 'Requires key content updates'}</span>
                 </div>
               </div>

@@ -126,31 +126,71 @@ class RecommendationService:
         profile_industry = profile.get("industry", "AI & SaaS").lower()
         profile_country = profile.get("country", "India").lower()
         
+        # Calculate base startup readiness scores independent of specific VCs
+        team_score = 50
+        if profile.get("startupName") and profile.get("description"):
+            team_score += 15
+        if profile.get("legalEntityType") and profile.get("legalEntityType") != "Unincorporated / Individual":
+            team_score += 15
+        if profile.get("stage") in ["MVP", "Revenue", "Fundraising"]:
+            team_score += 20
+        team_score = min(100, team_score)
+
+        product_score = 40
+        if profile.get("description"):
+            product_score += 15
+        if profile.get("has_validation"):
+            product_score += 25
+        if profile.get("stage") in ["MVP", "Revenue", "Fundraising"]:
+            product_score += 20
+        product_score = min(100, product_score)
+
+        traction_score = 30
+        stg = profile.get("stage", "Idea")
+        if stg == "MVP":
+            traction_score += 20
+        elif stg == "Revenue":
+            traction_score += 30
+        elif stg == "Fundraising":
+            traction_score += 40
+        if profile.get("has_applications"):
+            traction_score += 20
+        if profile.get("annualRevenue") and profile.get("annualRevenue") != "Pre-revenue":
+            traction_score += 10
+        traction_score = min(100, traction_score)
+        
         for inv in investors:
-            # Base match score
-            score = inv.get("readiness_score", inv.get("readinessScore", 80))
+            # 1. Calculate market score (fits custom sector alignment with this specific VC)
+            market_score = 50
+            if profile.get("has_validation"):
+                market_score += 20
             
-            # Stage match check
-            stages = [s.lower() for s in inv.get("stages", [])]
-            if profile_stage.lower() not in stages:
-                score -= 20
-                
-            # Sector match check
             sectors = [s.lower() for s in inv.get("sectors", [])]
             sector_match = False
             for sec in sectors:
                 if sec in profile_industry or profile_industry in sec:
                     sector_match = True
                     break
+            if sector_match:
+                market_score += 30
+            market_score = min(100, market_score)
+            
+            # 2. Calculate VC preferences fit score
+            fit_score = 100
+            stages = [s.lower() for s in inv.get("stages", [])]
+            if profile_stage.lower() not in stages:
+                fit_score -= 20
             if not sector_match:
-                score -= 15
-                
-            # Geography match check
+                fit_score -= 15
             geo = inv.get("geography", "").lower()
             if geo != "any" and geo != "global" and profile_country not in geo:
-                score -= 5
-                
-            score = max(40, min(100, score))
+                fit_score -= 5
+            fit_score = max(40, min(100, fit_score))
+            
+            # 3. Combine startup general readiness & specific VC fit score
+            overall_readiness = int((team_score + product_score + market_score + traction_score) / 4)
+            match_rate = int((overall_readiness * 0.6) + (fit_score * 0.4))
+            match_rate = max(40, min(100, match_rate))
             
             # Map Pydantic model naming
             matched.append({
@@ -161,9 +201,15 @@ class RecommendationService:
                 "stages": inv.get("stages", []),
                 "sectors": inv.get("sectors", []),
                 "geography": inv.get("geography"),
-                "readinessScore": score,
+                "readinessScore": match_rate,
                 "matchReason": inv.get("match_reason", inv.get("matchReason", "Matches industry segment.")),
-                "contactEmail": inv.get("contact_email", inv.get("contactEmail", ""))
+                "contactEmail": inv.get("contact_email", inv.get("contactEmail", "")),
+                "readinessBreakdown": {
+                    "team": team_score,
+                    "product": product_score,
+                    "market": market_score,
+                    "traction": traction_score
+                }
             })
             
         return sorted(matched, key=lambda x: x["readinessScore"], reverse=True)

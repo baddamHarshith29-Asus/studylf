@@ -334,3 +334,114 @@ class AIService:
                 ]
             }
             return fallback_questions.get(stage, fallback_questions['Idea'])
+
+    @classmethod
+    async def search_real_funding_schemes(cls, stage: str, country: str, industry: str) -> List[Dict[str, Any]]:
+        """Queries the web for active startup funding schemes, grants, and accelerators, formatting them via LLM."""
+        query = f"government grants incubator accelerator startup funding programs in {country} for {industry} stage {stage} active 2026"
+        logger.info(f"Searching web for real funding schemes: '{query}'")
+        
+        search_results = RAGPipeline.run_web_search(query)
+        search_context = "\n".join([
+            f"Source: {res['title']} ({res['url']})\nSnippet: {res['snippet']}\n"
+            for res in search_results
+        ])
+        
+        prompt = (
+            "You are an expert startup funding consultant. Below are real-time search results about active government grants, "
+            f"accelerators, Fellowships, and startup schemes in {country}:\n\n"
+            f"{search_context}\n\n"
+            f"Extract and compile a list of up to 4 real-world active funding opportunities matching the stage '{stage}', "
+            f"industry '{industry}', and based in '{country}'.\n"
+            "Ensure the data is actual and accurate (e.g. real schemes like SISFS, MeitY SAMRIDH, BIRAC, MSME grants, Y Combinator, etc.). "
+            "Do NOT invent or output mock/fictional schemes.\n"
+            "Output MUST be a valid JSON array matching this exact schema for each scheme object (do not include markdown block ticks outside the JSON):\n"
+            "[\n"
+            "  {\n"
+            "    \"name\": \"Full official name of the scheme/grant\",\n"
+            "    \"provider\": \"Official provider agency name\",\n"
+            "    \"type\": \"Grant / Debt\" or \"Accelerator\" or \"Credits\" or \"Fellowship\",\n"
+            "    \"description\": \"Detailed description of the program and what they offer\",\n"
+            "    \"amount\": \"Funding amount, e.g. 'Up to ₹50 Lakhs' or '$500,000'\",\n"
+            "    \"equity\": \"Equity terms, e.g. '0% (Non-dilutive)' or '7% equity'\",\n"
+            "    \"deadline\": \"Deadline in YYYY-MM-DD format, or 'Rolling'\",\n"
+            "    \"apply_link\": \"Real URL to the application page\",\n"
+            "    \"stages\": [\"Idea\", \"Validation\", \"MVP\", \"Revenue\", \"Fundraising\"] (select all eligible stages),\n"
+            "    \"countries\": [\"India\"] (select eligible countries, use 'Any' if global),\n"
+            "    \"industries\": [\"AI\", \"SaaS\"] (select eligible industries, use 'Any' if sector-agnostic),\n"
+            "    \"criteria\": {\n"
+            "      \"minStage\": \"Idea\" or \"Validation\" or \"MVP\" or \"Revenue\",\n"
+            "      \"maxStage\": \"MVP\" or \"Revenue\" or \"Fundraising\",\n"
+            "      \"mustBeIncorporated\": true/false,\n"
+            "      \"dpiitRecognized\": true/false\n"
+            "    },\n"
+            "    \"last_verified\": \"2026-06-30\"\n"
+            "  }\n"
+            "]"
+        )
+        
+        try:
+            content = await ai_manager.generate_response(prompt)
+            content = content.strip()
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+            data = json.loads(content)
+            if isinstance(data, list):
+                return data
+            return []
+        except Exception as e:
+            logger.error(f"Error generating real funding schemes: {e}")
+            return []
+
+    @classmethod
+    async def search_real_investors(cls, stage: str, geography: str, industry: str) -> List[Dict[str, Any]]:
+        """Queries the web for active VCs, micro-VCs, and angels matching startup profile parameters, formatting them via LLM."""
+        query = f"venture capital firms angel investors in {geography} investing in {industry} stage {stage} active portfolio 2026"
+        logger.info(f"Searching web for real investors: '{query}'")
+        
+        search_results = RAGPipeline.run_web_search(query)
+        search_context = "\n".join([
+            f"Source: {res['title']} ({res['url']})\nSnippet: {res['snippet']}\n"
+            for res in search_results
+        ])
+        
+        prompt = (
+            "You are an expert venture capitalist matcher. Below are real-time search results about active VCs, micro-VCs, "
+            f"and angel networks investing in {geography}:\n\n"
+            f"{search_context}\n\n"
+            f"Extract and compile a list of up to 4 real-world active investors matching the stage '{stage}', "
+            f"industry '{industry}', and based in/investing in '{geography}'.\n"
+            "Ensure the data is actual and accurate (e.g. real firms like Blume Ventures, Peak XV, Soma Capital, Kunal Bahl, etc.). "
+            "Do NOT invent or output mock/fictional investors.\n"
+            "Output MUST be a valid JSON array matching this exact schema for each investor object (do not include markdown block ticks outside the JSON):\n"
+            "[\n"
+            "  {\n"
+            "    \"name\": \"Full official name of the VC firm or angel\",\n"
+            "    \"type\": \"Venture Capital\" or \"Angel Investor\" or \"Angel Network\" or \"Micro VC\",\n"
+            "    \"ticket_size\": \"Check size range, e.g. '$250K - $1M' or '$50K - $200K'\",\n"
+            "    \"stages\": [\"Idea\", \"Validation\", \"MVP\", \"Revenue\", \"Fundraising\"] (select target stages),\n"
+            "    \"sectors\": [\"AI\", \"SaaS\"] (select target sectors),\n"
+            "    \"geography\": \"Target geography preference, e.g. 'India' or 'Global' or 'US'\",\n"
+            "    \"readiness_score\": 85,\n"
+            "    \"match_reason\": \"Specific reason why they are a match, highlighting their recent portfolio investments or sector preferences from the search snippets\",\n"
+            "    \"contact_email\": \"Real contact email or pitch submission URL (e.g. 'info@firm.com' or 'https://firm.com/pitch')\"\n"
+            "  }\n"
+            "]"
+        )
+        
+        try:
+            content = await ai_manager.generate_response(prompt)
+            content = content.strip()
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+            data = json.loads(content)
+            if isinstance(data, list):
+                return data
+            return []
+        except Exception as e:
+            logger.error(f"Error generating real investors: {e}")
+            return []

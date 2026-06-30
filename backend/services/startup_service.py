@@ -30,7 +30,12 @@ class StartupService:
                 "stage": "Idea",
                 "is_public": False,
                 "slug": "",
-                "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+                "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+                "legalEntityType": "Unincorporated / Individual",
+                "dpiitRecognized": False,
+                "incorporationDate": "",
+                "annualTurnoverCrores": 0.0,
+                "annualRevenue": "Pre-revenue"
             }
             
         p = user.profile
@@ -46,7 +51,12 @@ class StartupService:
                 "stage": "Idea",
                 "is_public": False,
                 "slug": "",
-                "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+                "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+                "legalEntityType": "Unincorporated / Individual",
+                "dpiitRecognized": False,
+                "incorporationDate": "",
+                "annualTurnoverCrores": 0.0,
+                "annualRevenue": "Pre-revenue"
             }
             
         return {
@@ -60,7 +70,12 @@ class StartupService:
             "stage": p.stage or "Idea",
             "is_public": getattr(p, "is_public", False),
             "slug": getattr(p, "slug", StartupService.get_slug(p.startup_name)),
-            "avatar": p.avatar or "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+            "avatar": p.avatar or "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+            "legalEntityType": getattr(p, "legal_entity_type", "Unincorporated / Individual"),
+            "dpiitRecognized": getattr(p, "dpiit_recognized", False),
+            "incorporationDate": getattr(p, "incorporation_date", ""),
+            "annualTurnoverCrores": getattr(p, "annual_turnover_crores", 0.0),
+            "annualRevenue": getattr(p, "annual_revenue", "Pre-revenue")
         }
 
     @staticmethod
@@ -86,6 +101,16 @@ class StartupService:
             update_fields["is_public"] = bool(data["is_public"])
         if "avatar" in data:
             update_fields["avatar"] = data["avatar"]
+        if "legalEntityType" in data:
+            update_fields["legal_entity_type"] = data["legalEntityType"]
+        if "dpiitRecognized" in data:
+            update_fields["dpiit_recognized"] = bool(data["dpiitRecognized"])
+        if "incorporationDate" in data:
+            update_fields["incorporation_date"] = data["incorporationDate"]
+        if "annualTurnoverCrores" in data:
+            update_fields["annual_turnover_crores"] = float(data["annualTurnoverCrores"])
+        if "annualRevenue" in data:
+            update_fields["annual_revenue"] = data["annualRevenue"]
             
         if update_fields:
             db.profiles.update_one({"user_id": user.id}, {"$set": update_fields})

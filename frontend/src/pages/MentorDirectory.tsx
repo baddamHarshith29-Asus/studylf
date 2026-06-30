@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiFetch } from '../services/api';
 import { showToast } from '../components/ui/Toast';
 import { Search, Calendar, Users, X } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 interface Mentor {
   id: string;
@@ -11,9 +12,13 @@ interface Mentor {
   expertise: string[];
   availability: string;
   image: string;
+  geography: string;
+  stages: string[];
+  matchScore?: number;
 }
 
 export default function MentorDirectory() {
+  const { profile } = useAuth();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -22,6 +27,11 @@ export default function MentorDirectory() {
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState('10:00 AM');
   const [discussionTopic, setDiscussionTopic] = useState('General Advisory');
+
+  // Overriding Mentor Matching State
+  const [selectedIndustry, setSelectedIndustry] = useState(profile.industry || 'AI & SaaS');
+  const [selectedStage, setSelectedStage] = useState(profile.stage || 'Idea');
+  const [selectedGeography, setSelectedGeography] = useState(profile.country || 'India');
 
   const MOCK_DATES = [
     { label: 'Jul 1 (Wed)', val: '2026-07-01' },
@@ -32,13 +42,18 @@ export default function MentorDirectory() {
   const MOCK_SLOTS = ['10:00 AM', '11:30 AM', '02:00 PM', '04:30 PM'];
 
   useEffect(() => {
-    fetchMentors();
-  }, []);
+    fetchMentors(selectedIndustry, selectedStage, selectedGeography);
+  }, [selectedIndustry, selectedStage, selectedGeography]);
 
-  const fetchMentors = async () => {
+  const fetchMentors = async (industry: string, stage: string, geography: string) => {
     setLoading(true);
     try {
-      const res = await apiFetch('/api/network/mentors');
+      const queryParams = new URLSearchParams({
+        industry,
+        stage,
+        geography
+      }).toString();
+      const res = await apiFetch(`/api/network/mentors?${queryParams}`);
       if (res.ok) {
         setMentors(await res.json());
       }
@@ -70,13 +85,47 @@ export default function MentorDirectory() {
   });
 
   return (
-    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
       {/* Header */}
       <div className="page-header">
         <div className="page-title-section">
           <h2 className="gradient-text">Ecosystem Mentors & Advisors</h2>
           <p>Book 1-on-1 office hours sessions with active entrepreneurs, product leaders, and B2B growth consultants.</p>
+        </div>
+      </div>
+
+      {/* Outreach Override Control Panel */}
+      <div className="glass-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', padding: '1.25rem' }}>
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Industry Expertise</label>
+          <select className="form-select" value={selectedIndustry} onChange={(e) => setSelectedIndustry(e.target.value)}>
+            <option value="AI & SaaS">AI & SaaS</option>
+            <option value="Fintech">Fintech</option>
+            <option value="Healthtech">Healthtech</option>
+            <option value="Edtech">Edtech</option>
+            <option value="Deep Tech">Deep Tech</option>
+          </select>
+        </div>
+
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Venture Stage Focus</label>
+          <select className="form-select" value={selectedStage} onChange={(e) => setSelectedStage(e.target.value)}>
+            <option value="Idea">Idea Stage</option>
+            <option value="Validation">Validation Stage</option>
+            <option value="MVP">MVP Phase</option>
+            <option value="Revenue">Early Revenue</option>
+            <option value="Fundraising">Fundraising Round</option>
+          </select>
+        </div>
+
+        <div className="form-group" style={{ margin: 0 }}>
+          <label className="form-label" style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Geography</label>
+          <select className="form-select" value={selectedGeography} onChange={(e) => setSelectedGeography(e.target.value)}>
+            <option value="India">India</option>
+            <option value="US">United States</option>
+            <option value="Global">Global / Remote</option>
+          </select>
         </div>
       </div>
 
@@ -105,40 +154,63 @@ export default function MentorDirectory() {
         </div>
       ) : (
         <div className="grid-3">
-          {filteredMentors.map((mentor) => (
-            <div key={mentor.id} className="glass-card animate-glow" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div className="flex-center" style={{ gap: '0.75rem', alignSelf: 'flex-start', justifyContent: 'flex-start' }}>
-                <img 
-                  src={mentor.image} 
-                  alt={mentor.name} 
-                  style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-light)' }} 
-                />
-                <div>
-                  <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: '#fff' }}>{mentor.name}</h4>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{mentor.role}</span>
+          {filteredMentors.map((mentor) => {
+            const score = mentor.matchScore || 80;
+
+            return (
+              <div key={mentor.id} className="glass-card animate-glow" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="flex-between" style={{ alignItems: 'flex-start' }}>
+                  <div className="flex-center" style={{ gap: '0.75rem', alignSelf: 'flex-start', justifyContent: 'flex-start' }}>
+                    <img 
+                      src={mentor.image} 
+                      alt={mentor.name} 
+                      style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover', border: '1px solid var(--border-light)' }} 
+                    />
+                    <div>
+                      <h4 style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--text-primary)' }}>{mentor.name}</h4>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--secondary)', display: 'block' }}>{mentor.role}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', display: 'block' }}>Match Rate</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 'bold', color: score > 75 ? 'var(--success)' : 'var(--warning)' }}>
+                      {score}%
+                    </span>
+                  </div>
+                </div>
+
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{mentor.experience}</p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem', fontSize: '0.72rem', background: 'rgba(255,255,255,0.01)', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
+                  <div>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.6rem' }}>Geography:</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{mentor.geography}</span>
+                  </div>
+                  <div>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.6rem' }}>Preferred Stages:</span>
+                    <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{mentor.stages.join(', ')}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
+                  {mentor.expertise.map((exp, idx) => (
+                    <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.35rem' }}>{exp}</span>
+                  ))}
+                </div>
+
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                  <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Avail: {mentor.availability}</span>
+                  <button 
+                    onClick={() => setBookingMentor(mentor)}
+                    className="btn btn-primary" 
+                    style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', borderRadius: '4px' }}
+                  >
+                    Book Session
+                  </button>
                 </div>
               </div>
-
-              <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{mentor.experience}</p>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
-                {mentor.expertise.map((exp, idx) => (
-                  <span key={idx} className="badge badge-secondary" style={{ fontSize: '0.62rem', padding: '0.1rem 0.35rem' }}>{exp}</span>
-                ))}
-              </div>
-
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Avail: {mentor.availability}</span>
-                <button 
-                  onClick={() => setBookingMentor(mentor)}
-                  className="btn btn-primary" 
-                  style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', borderRadius: '4px' }}
-                >
-                  Book Session
-                </button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

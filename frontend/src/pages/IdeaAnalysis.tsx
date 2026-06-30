@@ -735,19 +735,19 @@ export default function IdeaAnalysis() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                   <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Venture Name</span>
-                    <h4 style={{ fontSize: '0.98rem', color: '#fff', marginTop: '0.2rem' }}>{overview.startupName}</h4>
+                    <h4 style={{ fontSize: '0.98rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>{overview.startupName}</h4>
                   </div>
                   <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Industry Taxonomy</span>
-                    <h4 style={{ fontSize: '0.98rem', color: '#fff', marginTop: '0.2rem' }}>{overview.industry}</h4>
+                    <h4 style={{ fontSize: '0.98rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>{overview.industry}</h4>
                   </div>
                   <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Business Model</span>
-                    <h4 style={{ fontSize: '0.98rem', color: '#fff', marginTop: '0.2rem' }}>{overview.businessModel}</h4>
+                    <h4 style={{ fontSize: '0.98rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>{overview.businessModel}</h4>
                   </div>
                   <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Market Category</span>
-                    <h4 style={{ fontSize: '0.98rem', color: '#fff', marginTop: '0.2rem' }}>{overview.marketCategory}</h4>
+                    <h4 style={{ fontSize: '0.98rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>{overview.marketCategory}</h4>
                   </div>
                   <div style={{ padding: '0.85rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Implementation Difficulty</span>
@@ -794,7 +794,7 @@ export default function IdeaAnalysis() {
                   </div>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px', textAlign: 'center' }}>
                     <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase' }}>Frequency</span>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', display: 'block', marginTop: '0.4rem' }}>{problemData.frequency}</span>
+                    <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '0.4rem' }}>{problemData.frequency}</span>
                   </div>
                 </div>
 
@@ -817,7 +817,7 @@ export default function IdeaAnalysis() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>TAM (Addressable)</span>
-                    <h4 style={{ fontSize: '1.35rem', color: '#fff', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>{marketData.tam}</h4>
+                    <h4 style={{ fontSize: '1.35rem', color: 'var(--text-primary)', fontWeight: 900, fontFamily: 'var(--font-heading)' }}>{marketData.tam}</h4>
                   </div>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>SAM (Serviceable)</span>
@@ -876,7 +876,7 @@ export default function IdeaAnalysis() {
                 <div className="grid-2" style={{ gap: '1rem' }}>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Market Maturity</span>
-                    <p style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 600, marginTop: '2px' }}>{marketData.marketMaturity}</p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>{marketData.marketMaturity}</p>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.5rem' }}>Future Trends:</span>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
                       {marketData.futureTrends.map((t, idx) => (
@@ -929,10 +929,10 @@ export default function IdeaAnalysis() {
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                        <div>Funding: <strong style={{ color: '#fff' }}>{comp.funding}</strong></div>
-                        <div>Revenue: <strong style={{ color: '#fff' }}>{comp.revenue}</strong></div>
-                        <div>Pricing: <strong style={{ color: '#fff' }}>{comp.pricing}</strong></div>
-                        <div>Users: <strong style={{ color: '#fff' }}>{comp.users}</strong></div>
+                        <div>Funding: <strong style={{ color: 'var(--text-primary)' }}>{comp.funding}</strong></div>
+                        <div>Revenue: <strong style={{ color: 'var(--text-primary)' }}>{comp.revenue}</strong></div>
+                        <div>Pricing: <strong style={{ color: 'var(--text-primary)' }}>{comp.pricing}</strong></div>
+                        <div>Users: <strong style={{ color: 'var(--text-primary)' }}>{comp.users}</strong></div>
                         <div>Stack: <strong style={{ color: 'var(--secondary)' }}>{comp.techStack || 'N/A'}</strong></div>
                       </div>
 
@@ -966,22 +966,22 @@ export default function IdeaAnalysis() {
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <h4 style={{ fontSize: '0.85rem', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.4rem', marginBottom: '0.75rem', fontWeight: 700 }}>Demographics Map</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.78rem' }}>
-                      <div className="flex-between"><span>Age Cohort:</span><strong style={{ color: '#fff' }}>{customerData.demographics.age}</strong></div>
-                      <div className="flex-between"><span>Primary Roles:</span><strong style={{ color: '#fff' }}>{customerData.demographics.occupation}</strong></div>
-                      <div className="flex-between"><span>Income Tier:</span><strong style={{ color: '#fff' }}>{customerData.demographics.income}</strong></div>
-                      <div className="flex-between"><span>Concentration:</span><strong style={{ color: '#fff' }}>{customerData.demographics.location}</strong></div>
-                      <div className="flex-between"><span>Education:</span><strong style={{ color: '#fff' }}>{customerData.demographics.education}</strong></div>
+                      <div className="flex-between"><span>Age Cohort:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.demographics.age}</strong></div>
+                      <div className="flex-between"><span>Primary Roles:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.demographics.occupation}</strong></div>
+                      <div className="flex-between"><span>Income Tier:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.demographics.income}</strong></div>
+                      <div className="flex-between"><span>Concentration:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.demographics.location}</strong></div>
+                      <div className="flex-between"><span>Education:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.demographics.education}</strong></div>
                     </div>
                   </div>
 
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <h4 style={{ fontSize: '0.85rem', borderBottom: '1px solid rgba(255,255,255,0.04)', paddingBottom: '0.4rem', marginBottom: '0.75rem', fontWeight: 700 }}>ICP Profile Check</h4>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.78rem' }}>
-                      <div className="flex-between"><span>Frustrations:</span><strong style={{ color: '#fff', textAlign: 'right', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{customerData.icpProfile.problems}</strong></div>
-                      <div className="flex-between"><span>Goals:</span><strong style={{ color: '#fff', textAlign: 'right', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{customerData.icpProfile.goals}</strong></div>
-                      <div className="flex-between"><span>Buying Power:</span><strong style={{ color: '#fff' }}>{customerData.icpProfile.buyingPower}</strong></div>
-                      <div className="flex-between"><span>Tech Savviness:</span><strong style={{ color: '#fff' }}>{customerData.icpProfile.techKnowledge}</strong></div>
-                      <div className="flex-between"><span>Decision Maker:</span><strong style={{ color: '#fff' }}>{customerData.icpProfile.decisionMaker}</strong></div>
+                      <div className="flex-between"><span>Frustrations:</span><strong style={{ color: 'var(--text-primary)', textAlign: 'right', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{customerData.icpProfile.problems}</strong></div>
+                      <div className="flex-between"><span>Goals:</span><strong style={{ color: 'var(--text-primary)', textAlign: 'right', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{customerData.icpProfile.goals}</strong></div>
+                      <div className="flex-between"><span>Buying Power:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.icpProfile.buyingPower}</strong></div>
+                      <div className="flex-between"><span>Tech Savviness:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.icpProfile.techKnowledge}</strong></div>
+                      <div className="flex-between"><span>Decision Maker:</span><strong style={{ color: 'var(--text-primary)' }}>{customerData.icpProfile.decisionMaker}</strong></div>
                     </div>
                   </div>
                 </div>
@@ -996,7 +996,7 @@ export default function IdeaAnalysis() {
                             {p.name.charAt(0)}
                           </div>
                           <div>
-                            <h5 style={{ fontSize: '0.85rem', color: '#fff', margin: 0 }}>{p.name}</h5>
+                            <h5 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', margin: 0 }}>{p.name}</h5>
                             <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)' }}>{p.age} years • {p.location}</span>
                           </div>
                         </div>
@@ -1130,7 +1130,7 @@ export default function IdeaAnalysis() {
                 <div className="grid-2" style={{ gap: '1.25rem' }}>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Pricing Architecture</span>
-                    <p style={{ fontSize: '0.88rem', color: '#fff', fontWeight: 600, marginTop: '0.25rem' }}>{businessModel.pricingStructure}</p>
+                    <p style={{ fontSize: '0.88rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '0.25rem' }}>{businessModel.pricingStructure}</p>
                     
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.75rem' }}>Target Tags:</span>
                     <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.35rem' }}>
@@ -1158,7 +1158,7 @@ export default function IdeaAnalysis() {
                 <div className="grid-2" style={{ gap: '1.25rem' }}>
                   <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-light)', borderRadius: '8px' }}>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Launch Positioning Strategy</span>
-                    <p style={{ fontSize: '0.82rem', color: '#fff', fontWeight: 600, marginTop: '0.3rem' }}>{gtm.launchStrategy}</p>
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '0.3rem' }}>{gtm.launchStrategy}</p>
                     
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.75rem' }}>Positioning Statement:</span>
                     <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontStyle: 'italic', marginTop: '0.2rem' }}>"{gtm.positioning}"</p>
@@ -1193,7 +1193,7 @@ export default function IdeaAnalysis() {
                       ))}
                     </div>
                     <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginTop: '0.75rem' }}>First 100 Users Action:</span>
-                    <p style={{ fontSize: '0.78rem', color: '#fff', fontWeight: 600, marginTop: '0.2rem' }}>{gtm.first100Users}</p>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-primary)', fontWeight: 600, marginTop: '0.2rem' }}>{gtm.first100Users}</p>
                   </div>
                 </div>
               </div>
@@ -1230,7 +1230,7 @@ export default function IdeaAnalysis() {
                         justifyContent: 'center',
                         fontSize: '1.45rem',
                         fontWeight: 900,
-                        color: '#fff'
+                        color: 'var(--text-primary)'
                       }}>{investorData.readiness}%</div>
                     </div>
                   </div>
@@ -1254,7 +1254,7 @@ export default function IdeaAnalysis() {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
                       <span style={{ color: 'var(--text-secondary)' }}>Target Funding Round:</span>
-                      <strong style={{ color: '#fff' }}>{investorData.fundingStage}</strong>
+                      <strong style={{ color: 'var(--text-primary)' }}>{investorData.fundingStage}</strong>
                     </div>
                   </div>
                 </div>
@@ -1291,7 +1291,7 @@ export default function IdeaAnalysis() {
                       <div key={key} style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                         <div className="flex-between" style={{ fontSize: '0.72rem' }}>
                           <span style={{ textTransform: 'capitalize', color: 'var(--text-secondary)' }}>{key.replace(/([A-Z])/g, ' $1')}</span>
-                          <strong style={{ color: '#fff' }}>{val}%</strong>
+                          <strong style={{ color: 'var(--text-primary)' }}>{val}%</strong>
                         </div>
                         <div style={{ height: '3px', background: 'rgba(255,255,255,0.04)', borderRadius: '2px', overflow: 'hidden' }}>
                           <div style={{ height: '100%', width: `${val}%`, background: val > 75 ? 'var(--success)' : val > 50 ? 'var(--warning)' : 'var(--danger)' }} />
@@ -1322,7 +1322,7 @@ export default function IdeaAnalysis() {
                           {idx + 1}
                         </div>
                         <div style={{ flex: 1 }}>
-                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>{plan.week}</span>
+                          <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-primary)' }}>{plan.week}</span>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.2rem' }}>
                             {plan.tasks.map((task, tIdx) => (
                               <span key={tIdx} className="badge badge-secondary" style={{ fontSize: '0.7rem', padding: '0.1rem 0.4rem', color: 'var(--text-secondary)' }}>

@@ -4,6 +4,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../services/api';
 import { showToast } from '../components/ui/Toast';
 
+interface FundingSchemeCriteria {
+  minStage: string;
+  maxStage: string;
+  mustBeIncorporated: boolean;
+  dpiitRecognized: boolean;
+}
+
 interface FundingScheme {
   id: string;
   name: string;
@@ -16,6 +23,7 @@ interface FundingScheme {
   stages: string[];
   countries: string[];
   industries: string[];
+  criteria?: FundingSchemeCriteria;
 }
 
 interface Application {
@@ -167,18 +175,70 @@ export default function Funding() {
 
   // Eligibility checker logic
   const checkEligibility = (scheme: FundingScheme) => {
-    const isStageEligible = scheme.stages.includes('Any') || scheme.stages.includes(profile.stage);
+    const stagesOrder = ['Idea', 'Validation', 'MVP', 'Revenue', 'Fundraising'];
+    const startupStageIdx = stagesOrder.indexOf(profile.stage || 'Idea');
+    
+    // 1. Stage Check
+    let isStageEligible = true;
+    let minStageIdx = 0;
+    let maxStageIdx = stagesOrder.length - 1;
+    
+    if (scheme.criteria) {
+      minStageIdx = stagesOrder.indexOf(scheme.criteria.minStage || 'Idea');
+      maxStageIdx = stagesOrder.indexOf(scheme.criteria.maxStage || 'Fundraising');
+      isStageEligible = startupStageIdx >= minStageIdx && startupStageIdx <= maxStageIdx;
+    } else {
+      isStageEligible = scheme.stages.includes('Any') || scheme.stages.includes(profile.stage);
+    }
+    
+    // 2. Country Check
     const isCountryEligible = scheme.countries.includes('Any') || scheme.countries.includes(profile.country);
     
+    // 3. Sector Check
     let isSectorEligible = true;
     if (!scheme.industries.includes('Any')) {
       isSectorEligible = scheme.industries.some(ind => profile.industry.toLowerCase().includes(ind.toLowerCase()));
     }
+    
+    // 4. DPIIT Recognition Check
+    const isDpiitEligible = scheme.criteria?.dpiitRecognized ? !!profile.dpiitRecognized : true;
+    
+    // 5. Incorporation Check
+    const incorporatedTypes = ['Private Limited Company', 'Limited Liability Partnership (LLP)', 'Registered Partnership Firm'];
+    const isIncorporationEligible = scheme.criteria?.mustBeIncorporated 
+      ? incorporatedTypes.includes(profile.legalEntityType || '') 
+       : true;
+       
+     // 6. Incorporation Age Check
+     let isAgeEligible = true;
+     let ageYears = 0;
+     if (profile.incorporationDate) {
+       const incDate = new Date(profile.incorporationDate);
+       const today = new Date();
+       const diffTime = Math.abs(today.getTime() - incDate.getTime());
+       ageYears = diffTime / (1000 * 60 * 60 * 24 * 365.25);
+       if (scheme.criteria?.mustBeIncorporated && ageYears > 10) {
+         isAgeEligible = false;
+       }
+     } else if (scheme.criteria?.mustBeIncorporated) {
+       isAgeEligible = false;
+     }
+     
+     // 7. Turnover Check
+     let isTurnoverEligible = true;
+     const turnover = Number(profile.annualTurnoverCrores || 0);
+     if (scheme.criteria?.mustBeIncorporated && turnover > 100) {
+       isTurnoverEligible = false;
+     }
 
     const fails: string[] = [];
-    if (!isStageEligible) fails.push(`Venture stage must be in: ${scheme.stages.join(', ')}`);
+    if (!isStageEligible) fails.push(`Venture stage must be between: ${scheme.criteria?.minStage} and ${scheme.criteria?.maxStage}`);
     if (!isCountryEligible) fails.push(`Location restricted to: ${scheme.countries.join(', ')}`);
     if (!isSectorEligible) fails.push(`Target sector restricted to: ${scheme.industries.join(', ')}`);
+    if (!isDpiitEligible) fails.push(`Requires active DPIIT Startup Recognition Certificate`);
+    if (!isIncorporationEligible) fails.push(`Requires formal incorporation (Private Ltd, LLP, or Registered Partnership)`);
+    if (!isAgeEligible) fails.push(`Entity age exceeds limit (under 10 years from incorporation required)`);
+    if (!isTurnoverEligible) fails.push(`Annual turnover exceeds limit (under ₹100 Crores required)`);
 
     return {
       eligible: fails.length === 0,
@@ -186,7 +246,15 @@ export default function Funding() {
       checks: {
         stage: isStageEligible,
         country: isCountryEligible,
-        sector: isSectorEligible
+        sector: isSectorEligible,
+        dpiit: isDpiitEligible,
+        incorporation: isIncorporationEligible,
+        age: isAgeEligible,
+        turnover: isTurnoverEligible
+      },
+      details: {
+        ageYears,
+        turnover
       }
     };
   };
@@ -508,36 +576,82 @@ export default function Funding() {
                           flexWrap: 'wrap',
                           gap: '0.5rem'
                         }}>
-                          <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem' }}>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: eligibility.checks.stage ? 'var(--success)' : 'var(--danger)' }}>
-                              {eligibility.checks.stage ? <Check size={12} /> : <X size={12} />} Stage Fit
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: eligibility.checks.country ? 'var(--success)' : 'var(--danger)' }}>
-                              {eligibility.checks.country ? <Check size={12} /> : <X size={12} />} Location Fit
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: eligibility.checks.sector ? 'var(--success)' : 'var(--danger)' }}>
-                              {eligibility.checks.sector ? <Check size={12} /> : <X size={12} />} Sector Fit
-                            </span>
+                          {/* Transparent Eligibility Criteria Breakdown */}
+                          <div style={{ 
+                            background: 'rgba(0,0,0,0.15)', 
+                            border: '1px solid rgba(255,255,255,0.03)', 
+                            borderRadius: '6px', 
+                            padding: '0.75rem 1rem', 
+                            fontSize: '0.78rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.5rem',
+                            width: '100%'
+                          }}>
+                            <span style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Transparent Eligibility Criteria Check:</span>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.4rem 1.5rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.stage ? 'var(--success)' : 'var(--danger)' }}>
+                                {eligibility.checks.stage ? '✅' : '❌'} Stage: {profile.stage} stage (Required: {scheme.criteria?.minStage || 'Idea'} to {scheme.criteria?.maxStage || 'MVP'})
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.country ? 'var(--success)' : 'var(--danger)' }}>
+                                {eligibility.checks.country ? '✅' : '❌'} Location: {profile.country} (Required: {scheme.countries.join(', ')})
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.sector ? 'var(--success)' : 'var(--danger)' }}>
+                                {eligibility.checks.sector ? '✅' : '❌'} Sector Focus (Required: {scheme.industries.join(', ')})
+                              </div>
+                              {scheme.criteria?.dpiitRecognized && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.dpiit ? 'var(--success)' : 'var(--danger)' }}>
+                                  {eligibility.checks.dpiit ? '✅' : '❌'} DPIIT Recognition: {profile.dpiitRecognized ? 'Registered' : 'Unregistered'}
+                                </div>
+                              )}
+                              {scheme.criteria?.mustBeIncorporated && (
+                                <>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.incorporation ? 'var(--success)' : 'var(--danger)' }}>
+                                    {eligibility.checks.incorporation ? '✅' : '❌'} Entity: {profile.legalEntityType ? profile.legalEntityType.split(' ')[0] : 'Unincorporated'}
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.age ? 'var(--success)' : 'var(--danger)' }}>
+                                    {eligibility.checks.age ? '✅' : '❌'} Incorporation Age: {profile.incorporationDate ? `${Math.floor(eligibility.details.ageYears)} yrs` : 'Not Set'} (&lt;10 yrs)
+                                  </div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: eligibility.checks.turnover ? 'var(--success)' : 'var(--danger)' }}>
+                                    {eligibility.checks.turnover ? '✅' : '❌'} Turnover: ₹{profile.annualTurnoverCrores || 0} Cr (&lt;₹100 Cr)
+                                  </div>
+                                </>
+                              )}
+                            </div>
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            {!eligibility.eligible && (
-                              <span style={{ fontSize: '0.72rem', color: 'var(--danger)' }}>Ineligible based on profile</span>
-                            )}
-                            <button 
-                              onClick={() => setSelectedScheme(scheme)} 
-                              className="btn" 
-                              style={{ 
-                                padding: '0.35rem 0.75rem', 
-                                fontSize: '0.75rem', 
-                                borderRadius: '4px',
-                                background: eligibility.eligible ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
-                                color: eligibility.eligible ? '#fff' : 'var(--text-muted)',
-                                border: '1px solid var(--border-light)'
-                              }}
-                            >
-                              Apply / Track
-                            </button>
+                          <div style={{ 
+                            borderTop: '1px solid rgba(255,255,255,0.05)', 
+                            paddingTop: '0.75rem', 
+                            display: 'flex', 
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            width: '100%',
+                            flexWrap: 'wrap',
+                            gap: '0.5rem'
+                          }}>
+                            <div style={{ display: 'flex', gap: '1rem', fontSize: '0.75rem' }}>
+                              <span style={{ color: eligibility.eligible ? 'var(--success)' : 'var(--danger)', fontWeight: 600 }}>
+                                {eligibility.eligible ? '✓ Scheme Matches Venture Profile' : '✗ Profile Fails Specific Criteria'}
+                              </span>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                              <button 
+                                onClick={() => setSelectedScheme(scheme)} 
+                                className="btn" 
+                                style={{ 
+                                  padding: '0.35rem 0.75rem', 
+                                  fontSize: '0.75rem', 
+                                  borderRadius: '4px',
+                                  background: eligibility.eligible ? 'var(--primary)' : 'rgba(255,255,255,0.05)',
+                                  color: eligibility.eligible ? '#fff' : 'var(--text-muted)',
+                                  border: '1px solid var(--border-light)'
+                                }}
+                              >
+                                Apply / Track
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
